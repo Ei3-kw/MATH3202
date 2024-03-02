@@ -16,10 +16,9 @@ C_l = 1.12
 F_w = 4.0
 F_l = 1.0
 
+# Change this if needed for different data
 Supply = [9600, 5300, 9300, 9200, 7100]
-
 Fat = [3.4, 3.6, 3.8, 3.6, 3.7]
-
 
 # Create a new model
 m = gp.Model()
