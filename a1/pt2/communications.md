@@ -1,4 +1,4 @@
-# Pt1
+# Pt2
 
 Teal Cow Dairy has a long history of providing quality products to customers. We are hoping you can help us maintain that quality while also improving our income.
 
@@ -14,12 +14,24 @@ We produce whole milk and low fat milk. Whole milk contains 4% milk fat and sell
 
 How much whole milk and low fat milk should we produce from this total supply? Please provide us with the optimal daily income.
 
+--------------------------------------------------------------------------
+
+Thank you for your initial estimate. However, Haven and Silo Springs are planning to switch to organic production, without any change in volume of supply. Organic whole milk and organic low fat milk sell for 20 cents more per litre compared to normal milks.
+
+We can use organic supply in normal products, but our organic products must use only organic supply. The total milk fat content of each of organic and normal milk production must match the total milk fat content of their inputs.
+
+How much whole milk and low fat milk, both organic and normal, should we produce from the total supply? Please provide us with the revised optimal daily income.
+
+
 ### Sets
 - $Farms$
 - $S:$ Supply
 - $F:$ Fat
 
 ### Data
+- $O_f$ - Farm being organic (binary)
+- $O_w$ - Price of organic whole milk ($/L)
+- $O_l$ - Price of organic low fat milk ($/L)
 - $C_w$ - price of whole milk ($/L)
 - $C_l$ - price of low fat milk ($/L)
 - $F_w$ - fat of whole milk (%)
@@ -28,13 +40,17 @@ How much whole milk and low fat milk should we produce from this total supply? P
 - $F_f$ - fat from each farm (%)
 
 ### Variables
-- $P_{wf}$ - Production of whole milk from each farm (L)
+- $P_{wf}$ - Production of normal whole milk from each farm (L)
+- $P_{owf}$ - Production of organic whole milk from each farm (L)
+- $P_{olf}$ - Production of organic low fat milk from each farm (L)
 
 ### Objective function
-$$max(\sum_{f \in Farms} C_w*P_{wf}+C_l*(S_f-P_{wf}))$$
+$$max(\sum_{f \in Farms} C_w*P_{wf} + C_l*(S_f-P_{wf}-P_{olf}-P_{owf}) + O_w*P_{owf} + O_l*P_{olf})$$
 
 ### Constraints
-$$\sum_{f \in Farms} F_w*P_{wf} + F_l*(S_f-P_{wf}) = \sum_{f \in Farms} S_f*F_f $$
-$$\forall f \in F,\; 0 \leq P_{wf} \leq S_f$$
+$$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P{owf}) = \sum_{f \in Farms} S_f*F_f$$
+$$\forall f \in F,\; 0 \leq P_{owf} \leq S_f*O_f-P_{olf}$$
+$$\forall f \in F,\; 0 \leq P_{wf} \leq S_f-P_{owf}-P_{olf}$$
+
 
 
