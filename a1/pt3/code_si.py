@@ -77,6 +77,12 @@ model.optimize()
 print("\n")
 print("-----------------------------------------------------------")
 print("INCOME:", round(model.objVal, 2), "\n")
+print("Total full cream milk:", sum(round(X[m, f].x, 2) for m in M for f in F if m == 0))
+print("Total low fat milk:", sum(round(X[m, f].x, 2) for m in M for f in F if m == 1))
+print("Total organic full cream milk:", sum(round(X[m, f].x, 2) for m in M for f in F if m == 2))
+print("Total organic low fat milk:", sum(round(X[m, f].x, 2) for m in M for f in F if m == 3))
+print("\n")
+
 print("----- Breakdown by milk variety ---------------------------")
 for m in M:
     print(milk[m])
