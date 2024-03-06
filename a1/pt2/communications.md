@@ -48,7 +48,7 @@ How much whole milk and low fat milk, both organic and normal, should we produce
 $$max(\sum_{f \in Farms} C_w*P_{wf} + C_l*(S_f-P_{wf}-P_{olf}-P_{owf}) + O_w*P_{owf} + O_l*P_{olf})$$
 
 ### Constraints
-$$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P{owf}) = \sum_{f \in Farms} S_f*F_f$$
+$$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P_{owf}) = \sum_{f \in Farms} S_f*F_f$$
 $$\forall f \in F,\; 0 \leq P_{owf} \leq S_f*O_f-P_{olf}$$
 $$\forall f \in F,\; 0 \leq P_{wf} \leq S_f-P_{owf}-P_{olf}$$
 
