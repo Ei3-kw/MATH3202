@@ -59,9 +59,9 @@ $$max(\sum_{f \in Farms} C_w*P_{wf} + C_l*(S_f-P_{wf}-P_{olf}-P_{owf}) + O_w*P_{
 $$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P{owf}) = \sum_{f \in Farms} S_f*F_f$$
 $$\forall f \in F,\; 0 \leq P_{owf} \leq S_f*O_f-P_{olf}$$
 $$\forall f \in F,\; 0 \leq P_{wf} \leq S_f-P_{owf}-P_{olf}$$
-$$P_{owf} / P_{olf} >= 3$$
-$$P_{wf} / (S_f-P_{wf}-P{owf}-P_{olf}) >= 3$$
-$$(P_{owf}+P_{olf}) / S_f <= .15$$
+$$\sum_{f \in F} P_{owf} \geq 3 * \sum_{f \in F} P_{olf}$$
+$$\sum_{f \in F} P_{wf} \geq 3 * \sum_{f \in F} (S_f-P_{wf}-P_{owf}-P_{olf})$$
+$$\sum_{f \in F} (P_{owf}+P_{olf}) \leq 0.15 * \sum_{f \in F} S_f$$
 
 
 
