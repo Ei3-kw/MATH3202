@@ -83,7 +83,7 @@ print("Total organic full cream milk:", sum(round(X[m, f].x, 2) for m in M for f
 print("Total organic low fat milk:", sum(round(X[m, f].x, 2) for m in M for f in F if m == 3))
 print("\n")
 
-print("----- Breakdown by milk variety ---------------------------")
+print("--- Breakdown by milk variety -----------------------------")
 for m in M:
     print(milk[m])
     for f in F:
