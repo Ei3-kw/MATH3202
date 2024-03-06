@@ -1,4 +1,4 @@
-# Pt2
+# Pt3
 
 Teal Cow Dairy has a long history of providing quality products to customers. We are hoping you can help us maintain that quality while also improving our income.
 
@@ -19,6 +19,14 @@ How much whole milk and low fat milk should we produce from this total supply? P
 Thank you for your initial estimate. However, Haven and Silo Springs are planning to switch to organic production, without any change in volume of supply. Organic whole milk and organic low fat milk sell for 20 cents more per litre compared to normal milks.
 
 We can use organic supply in normal products, but our organic products must use only organic supply. The total milk fat content of each of organic and normal milk production must match the total milk fat content of their inputs.
+
+How much whole milk and low fat milk, both organic and normal, should we produce from the total supply? Please provide us with the revised optimal daily income.
+
+--------------------------------------------------------------------------
+
+We realise that we have been ignoring marketing restrictions. It turns out the low fat milk can make up at most 25% of the total of low fat and whole milk, for each of organic and normal products. Additionally, organic products can make up at most 15% of all milk sold.
+
+Finally, we can potentially use excess milk fat, so now we only require that the total milk fat in organic and normal products is no more than that in each of their inputs.
 
 How much whole milk and low fat milk, both organic and normal, should we produce from the total supply? Please provide us with the revised optimal daily income.
 
@@ -48,9 +56,14 @@ How much whole milk and low fat milk, both organic and normal, should we produce
 $$max(\sum_{f \in Farms} C_w*P_{wf} + C_l*(S_f-P_{wf}-P_{olf}-P_{owf}) + O_w*P_{owf} + O_l*P_{olf})$$
 
 ### Constraints
-$$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P_{owf}) = \sum_{f \in Farms} S_f*F_f$$
+$$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P_{owf}) \leq \sum_{f \in Farms} S_f*F_f$$
+$$\sum_{f \in Farms} F_w*P_{owf} + F_l*P_{olf} \leq \sum_{f \in O_f} S_f*F_f$$
 $$\forall f \in F,\; 0 \leq P_{owf} \leq S_f*O_f-P_{olf}$$
 $$\forall f \in F,\; 0 \leq P_{wf} \leq S_f-P_{owf}-P_{olf}$$
+$$\sum_{f \in F} P_{owf} \geq 3 * \sum_{f \in F} P_{olf}$$
+$$\sum_{f \in F} P_{wf} \geq 3 * \sum_{f \in F} (S_f-P_{wf}-P_{owf}-P_{olf})$$
+$$\sum_{f \in F} (P_{owf}+P_{olf}) \leq 0.15 * \sum_{f \in F} S_f$$
+
 
 
 
