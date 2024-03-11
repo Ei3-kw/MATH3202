@@ -54,13 +54,13 @@ How should we best plan our milk processing for the next seven days? Please prov
 
 
 ### Objective function
-$$max(\sum_{t \in Days} (\sum_{f \in Farms} W_w * P_{wft} + W_l * P_{lft}) - (\sum_{t \in Days} (S_{wt} + S_{lt}) * C_s)$$
+$$max(\sum_{t \in Days} (\sum_{f \in Farms} W_w * P_{wft} + W_l * P_{lft}) - (S_{wt} + S_{lt}) * C_s$$
 
 ### Constraints
-$$P_{wft} + P_{lft} \leq S_f \forall f \in Farms, \forall t \in Days$$
-$$\sum_{f \in Farms} F_w*P_{wft} + F_l*P_{lft} \leq \sum_{f \in Farms} S_f*F_f \forall t \in Days$$
-$$S_{wt} = P_{wft} - D{wt} + S_{wt-1} \forall t \in Days \ t = 1$$
-$$S_{lt} = P_{lft} - D{lt} + S_{lt-1} \forall t \in Days \ t = 1$$
+$$\forall f \in Farms, \forall t \in Days, \space P_{wft} + P_{lft} \leq S_f $$
+$$\forall t \in Days, \space \sum_{f \in Farms} F_w*P_{wft} + F_l*P_{lft} \leq \sum_{f \in Farms} S_f*F_f $$
+$$S_{wt} = P_{wft} - D{wt} + S_{wt-1},\space \forall t \in Days \ t = 1$$
+$$S_{lt} = P_{lft} - D{lt} + S_{lt-1},\space \forall t \in Days \ t = 1$$
 
 
 

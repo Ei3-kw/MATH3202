@@ -33,16 +33,13 @@ m = gp.Model()
 # Create variables
 x = {(t, f): m.addVar(lb=0, ub=Supply[f], name=f"wholesale whole - {Farms[f]} {Days[t]}") for f in F for t in T}
 y = {(t, f): m.addVar(lb=0, ub=Supply[f], name=f"wholesale low fat - {Farms[f]} {Days[t]}") for f in F for t in T}
-z = {t: m.addVar(lb=0, name=f"whole storage - {T[t]}") for t in T} 
-w = {t: m.addVar(lb=0, name=f"low fat storage - {T[t]}") for t in T} 
+z = {t: m.addVar(lb=0, name=f"whole storage - {Days[t]}") for t in T} 
+w = {t: m.addVar(lb=0, name=f"low fat storage - {Days[t]}") for t in T} 
+a = {t: m.addVar(lb=0, ub=Demand[t][0], name=f"whole milk sold on {Days[t]}") for t in T}
+b = {t: m.addVar(lb=0, ub=Demand[t][1], name=f"low fat milk sold on {Days[t]}") for t in T}
 
 # Set objective function
-# m.setObjective(gp.quicksum(W_w*x[t, f] + W_l*y[t, f] for t in T for f in F)
-#     - (gp.quicksum(x[t, f] + y[t, f] for t in T for f in F)
-#         -gp.quicksum(sum(Demand[t])-z[t]-w[t] for t in T)) * C_s,
-#     gp.GRB.MAXIMIZE)
-
-m.setObjective(gp.quicksum(W_w*x[t, f] + W_l*y[t, f] for t in T for f in F)
+m.setObjective(gp.quicksum(W_w*a[t] + W_l*b[t] for t in T)
     - gp.quicksum(z[t]+w[t] for t in T) * C_s,
     gp.GRB.MAXIMIZE)
 
@@ -54,11 +51,15 @@ for t in T:
     
     # storage
     if t == 0:
-        m.addConstr(z[t] == gp.quicksum(x[t,f] for f in F) - Demand[t][0])
-        m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) - Demand[t][1])
+        m.addConstr(z[t] == gp.quicksum(x[t,f] for f in F) - a[t])
+        m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) - b[t])
+        m.addConstr(a[t] <= gp.quicksum(x[t,f] for f in F))
+        m.addConstr(b[t] <= gp.quicksum(y[t,f] for f in F))
     else:
-        m.addConstr(z[t] == gp.quicksum(x[t,f] for f in F) + z[t-1] - Demand[t][0])
-        m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) + w[t-1] - Demand[t][1])
+        m.addConstr(z[t] == gp.quicksum(x[t,f] for f in F) + z[t-1] - a[t])
+        m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) + w[t-1] - b[t])
+        m.addConstr(a[t] <= gp.quicksum(x[t,f] for f in F) + z[t-1])
+        m.addConstr(b[t] <= gp.quicksum(y[t,f] for f in F) + w[t-1])
 
 # Solve it!
 m.optimize()
@@ -69,17 +70,12 @@ if m.status == gp.GRB.INFEASIBLE:
     exit()
 
 print(f"Total income: {m.objVal}")
-# print("\nTotal:\n-------------------------------------------------")
-# print(f"\
-#         Whole organic - {sum(m.getVarByName(f'whole organic - {Farms[f]}').X for f in F)}\n\
-#         Low fat organic - {sum(m.getVarByName(f'low fat organic - {Farms[f]}').X for f in F)}\n\
-#         Whole - {sum(m.getVarByName(f'whole normal - {Farms[f]}').X for f in F)}\n\
-#         Low fat - {sum(Supply[f] - m.getVarByName(f'whole normal - {Farms[f]}').X - m.getVarByName(f'low fat organic - {Farms[f]}').X - m.getVarByName(f'whole organic - {Farms[f]}').X for f in F)}\n")
+print("\nBreakdown:\nCatogory            Day         Sold(L) / Demand(L)\n-------------------------------------------------")
+for t in T:
+    print(f"Whole sold          on {Days[t]}      {m.getVarByName(f'whole milk sold on {Days[t]}').X} / {Demand[t][0]}")
+    print(f"Low fat sold        on {Days[t]}      {m.getVarByName(f'low fat milk sold on {Days[t]}').X} / {Demand[t][1]}\n")
 
-# print("\nBreakdown\n----------------------------------------------")
-# for f in F:
-#     print(f"{Farms[f]}: \n\
-#         Whole organic - {m.getVarByName(f'whole organic - {Farms[f]}').X}\n\
-#         Low fat organic - {m.getVarByName(f'low fat organic - {Farms[f]}').X}\n\
-#         Whole - {m.getVarByName(f'whole normal - {Farms[f]}').X}\n\
-#         Low fat - {Supply[f] - m.getVarByName(f'whole normal - {Farms[f]}').X - m.getVarByName(f'low fat organic - {Farms[f]}').X - m.getVarByName(f'whole organic - {Farms[f]}').X}\n")
+print("\nStorage:\nCatogory            Day         Amount(L)\n-------------------------------------------------")
+for t in T:
+    print(f"wholesale           on {Days[t]}      {m.getVarByName(f'whole storage - {Days[t]}').X}")
+    print(f"low fat             on {Days[t]}      {m.getVarByName(f'low fat storage - {Days[t]}').X}\n")
