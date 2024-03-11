@@ -70,12 +70,12 @@ if m.status == gp.GRB.INFEASIBLE:
     exit()
 
 print(f"Total income: {m.objVal}")
-print("\nBreakdown:\nCatogory            Day         Sold(L) / Demand(L)\n-------------------------------------------------")
+print("\nBreakdown:\nCatogory               Day      Sold(L) / Demand(L)\n-------------------------------------------------")
 for t in T:
     print(f"Whole sold          on {Days[t]}      {m.getVarByName(f'whole milk sold on {Days[t]}').X} / {Demand[t][0]}")
     print(f"Low fat sold        on {Days[t]}      {m.getVarByName(f'low fat milk sold on {Days[t]}').X} / {Demand[t][1]}\n")
 
-print("\nStorage:\nCatogory            Day         Amount(L)\n-------------------------------------------------")
+print("\nStorage:\nCatogory               Day      Amount(L)\n-------------------------------------------------")
 for t in T:
     print(f"wholesale           on {Days[t]}      {m.getVarByName(f'whole storage - {Days[t]}').X}")
     print(f"low fat             on {Days[t]}      {m.getVarByName(f'low fat storage - {Days[t]}').X}\n")

@@ -49,18 +49,28 @@ How should we best plan our milk processing for the next seven days? Please prov
 ### Variables
 - $P_{wft}$ - Production of whole milk from each farm (L) of a day 
 - $P_{lft}$ - Production of low fat milk from each farm (L) of a day
-- $S_{wt}$ - Whole milk in storage (L) on a day
-- $S_{lt}$ - Low fat milk in storage (L) on a day
-
+- $S_{wt}$ - Whole milk stored (L) on a day
+- $S_{lt}$ - Low fat milk stored (L) on a day
+- $V_{wt}$ - Whole milk sold (L) on a day
+- $V_{lt}$ - Low fat milk sold (L) on a day
 
 ### Objective function
-$$max(\sum_{t \in Days} (\sum_{f \in Farms} W_w * P_{wft} + W_l * P_{lft}) - (S_{wt} + S_{lt}) * C_s$$
+$$max(\sum_{t \in Days} W_w * V_{wt} + W_l * V_{lt} - (S_{wt} + S_{lt}) * C_s)$$
 
 ### Constraints
-$$\forall f \in Farms, \forall t \in Days, \space P_{wft} + P_{lft} \leq S_f $$
-$$\forall t \in Days, \space \sum_{f \in Farms} F_w*P_{wft} + F_l*P_{lft} \leq \sum_{f \in Farms} S_f*F_f $$
-$$S_{wt} = P_{wft} - D{wt} + S_{wt-1},\space \forall t \in Days \ t = 1$$
-$$S_{lt} = P_{lft} - D{lt} + S_{lt-1},\space \forall t \in Days \ t = 1$$
+$$\forall f \in Farms, \forall t \in Days, \space P_{wft} + P_{lft} \leq S_f$$
+$$\forall t \in Days,\space \sum_{f\in Farms} F_w * P_{wft} + F_l * P_{lft} \leq \sum_{f \in Farms} S_f * F_f$$
+*Monday:*
+$$S_{wt} = P_{wft} - V{wt}$$
+$$S_{lt} = P_{lft} - V{lt}$$
+$$V_{wt} \leq \sum_{f \in Farms} P_{wft}$$
+$$V_{lt} \leq \sum_{f \in Farms} P_{lft}$$
 
+
+*Other Days:*
+$$S_{wt} = P_{wft} - V{wt} + S_{wt-1}$$
+$$S_{lt} = P_{lft} - V{lt} + S_{lt-1}$$
+$$V_{wt} \leq \sum_{f \in Farms} P_{wft} + S_{wt-1}$$
+$$V_{lt} \leq \sum_{f \in Farms} P_{lft} + S_{lt-1}$$
 
 
