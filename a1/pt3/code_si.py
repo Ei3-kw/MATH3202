@@ -18,6 +18,8 @@ F = range(len(farms))
 income = [1.10, 1.12, 1.30, 1.32]
 fat_product = [4, 1, 4, 1]
 
+# supply = [9600, 5300, 9300, 9200, 7100]
+# fat = [3.4, 3.6, 3.8, 3.6, 3.7]
 supply = [5400, 7200, 7600, 5700, 7000]
 fat = [3.8, 3.6, 3.3, 3.3, 3.7]
 
@@ -84,10 +86,10 @@ print("Total organic low fat milk:", sum(round(X[m, f].x, 2) for m in M for f in
 print("\n")
 
 print("--- Breakdown by milk variety -----------------------------")
-for m in M:
-    print(milk[m])
-    for f in F:
-        print("- ", farms[f], ":", round(X[m, f].x, 2))
+for f in F:
+    print(farms[f])
+    for m in M:
+        print("- ", milk[m], ":", round(X[m, f].x, 2))
     print("\n")
 
 print("Total organic milk:", 
