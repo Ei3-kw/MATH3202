@@ -55,18 +55,13 @@ for t in T:
         m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) - b[t])
         m.addConstr(a[t] <= gp.quicksum(x[t,f] for f in F))
         m.addConstr(b[t] <= gp.quicksum(y[t,f] for f in F))
-    
-    elif t == 1:
+    else:
         m.addConstr(z[t] == gp.quicksum(x[t,f] for f in F) + z[t-1] - a[t])
         m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) + w[t-1] - b[t])
         m.addConstr(a[t] <= gp.quicksum(x[t,f] for f in F) + z[t-1])
         m.addConstr(b[t] <= gp.quicksum(y[t,f] for f in F) + w[t-1])
-
-    else:
-        m.addConstr(z[t] == gp.quicksum(x[t,f] for f in F) + z[t-1] - a[t] - z[t-2])
-        m.addConstr(w[t] == gp.quicksum(y[t,f] for f in F) + w[t-1] - b[t] - w[t-2])
-        m.addConstr(a[t] <= gp.quicksum(x[t,f] for f in F) + z[t-1] - z[t-2])
-        m.addConstr(b[t] <= gp.quicksum(y[t,f] for f in F) + w[t-1] - w[t-2])
+        m.addConstr(a[t] >= z[t-1])
+        m.addConstr(b[t] >= w[t-1])
 
 # Solve it!
 m.optimize()
