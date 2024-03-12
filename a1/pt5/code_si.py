@@ -126,12 +126,12 @@ print("--- Further Breakdown --------------------------------------")
 for d in D:
     print("----- ", days[d], " -----\n")
     
-    print(" Today produced:    ", milk[0], ": ", X[0,d].x)
-    print("                    ", milk[1], ": ", X[1,d].x)
-    print(" Today sold:        ", milk[0], ": ", Y[0,d].x)
-    print("                    ", milk[1], ": ", Y[1,d].x)
-    print(" Today stored:      ", milk[0], ": ", Z[0,d].x)
-    print("                    ", milk[1], ": ", Z[1,d].x)
+    print(" Today produced:    ", milk[0], ": ", round(X[0,d].x, 2))
+    print("                    ", milk[1], ": ", round(X[1,d].x, 2))
+    print(" Today sold:        ", milk[0], ": ", round(Y[0,d].x, 2))
+    print("                    ", milk[1], ": ", round(Y[1,d].x, 2))
+    print(" Today stored:      ", milk[0], ": ", round(S[0,d].x, 2))
+    print("                    ", milk[1], ": ", round(S[1,d].x, 2))
 
     if d == 0:
         print(" Sold from storage: ", milk[0], ": 0")
