@@ -1,3 +1,8 @@
+---
+geometry: margin=2cm
+---
+
+
 # Pt5
 
 Thank you for your help in improving the revenue from our existing farms. Based on the increased revenue, we are now looking to expand our operations by working with additional farms to satisfy demand from industrial customers.
@@ -36,8 +41,8 @@ Taking this into account, how should we best plan our milk processing for the ne
 
 ### Sets
 - $Farms$
-- $S:$ Supply
-- $F:$ Fat
+- $S$ - Supply
+- $F$ - Fat
 
 ### Data
 - $W_w$ - wholesale price of whole milk ($/L)
@@ -63,7 +68,7 @@ Taking this into account, how should we best plan our milk processing for the ne
 $$max(\sum_{t \in Days} W_w * V_{wt} + W_l * V_{lt} - (S_{wt} + S_{lt}) * C_s)$$
 
 ### Constraints
-$$\forall f \in Farms, \forall t \in Days, \space P_{wft} + P_{lft} \leq S_f$$
+$$\forall f \in Farms,\space\forall t \in Days,\space P_{wft} + P_{lft} \leq S_f$$
 $$\forall t \in Days,\space \sum_{f\in Farms} F_w * P_{wft} + F_l * P_{lft} \leq \sum_{f \in Farms} S_f * F_f$$
 *Monday:*
 $$S_{wt} = P_{wft} - V{wt}$$
@@ -71,18 +76,10 @@ $$S_{lt} = P_{lft} - V{lt}$$
 $$V_{wt} \leq \sum_{f \in Farms} P_{wft}$$
 $$V_{lt} \leq \sum_{f \in Farms} P_{lft}$$
 
-
-*Tuesday:*
+*Other Days:*
 $$S_{wt} = P_{wft} - V{wt} + S_{wt-1}$$
 $$S_{lt} = P_{lft} - V{lt} + S_{lt-1}$$
-$$V_{wt} \leq \sum_{f \in Farms} P_{wft} + S_{wt-1}$$
-$$V_{lt} \leq \sum_{f \in Farms} P_{lft} + S_{lt-1}$$
-
-
-*Other Days:*
-$$S_{wt} = P_{wft} - V{wt} + S_{wt-1} - S_{wt-2}$$
-$$S_{lt} = P_{lft} - V{lt} + S_{lt-1} - S_{lt-2}$$
-$$V_{wt} \leq \sum_{f \in Farms} P_{wft} + S_{wt-1} - S_{wt-2}$$
-$$V_{lt} \leq \sum_{f \in Farms} P_{lft} + S_{lt-1} - S_{lt-2}$$
+$$S_{wt-2} \leq V_{wt} \leq \sum_{f \in Farms} P_{wft} + S_{wt-1}$$
+$$S_{lt-2} \leq V_{lt} \leq \sum_{f \in Farms} P_{lft} + S_{lt-1}$$
 
 
