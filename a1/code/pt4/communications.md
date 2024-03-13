@@ -55,11 +55,12 @@ How should we best plan our milk processing for the next seven days? Please prov
 - $V_{lt}$ - Low fat milk sold (L) on a day
 
 ### Objective function
-$$max(\sum_{t \in Days} W_w * V_{wt} + W_l * V_{lt} - (S_{wt} + S_{lt}) * C_s)$$
+$$max(\sum_{t \in Days} W_w  \times  V_{wt} + W_l  \times  V_{lt} - (S_{wt} + S_{lt})  \times  C_s)$$
 
 ### Constraints
 $$\forall f \in Farms, \forall t \in Days, \space P_{wft} + P_{lft} \leq S_f$$
-$$\forall t \in Days,\space \sum_{f\in Farms} F_w * P_{wft} + F_l * P_{lft} \leq \sum_{f \in Farms} S_f * F_f$$
+$$\forall t \in Days,\space \sum_{f\in Farms} F_w  \times  P_{wft} + F_l  \times  P_{lft} \leq \sum_{f \in Farms} S_f  \times  F_f$$
+
 *Monday:*
 $$S_{wt} = P_{wft} - V{wt}$$
 $$S_{lt} = P_{lft} - V{lt}$$

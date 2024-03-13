@@ -23,7 +23,7 @@ How much whole milk and low fat milk should we produce from this total supply? P
 - $C_w$ - price of whole milk ($/L)
 - $C_l$ - price of low fat milk ($/L)
 - $F_w$ - fat of whole milk (%)
-- $F_l$ - fat of ow fat milk (%)
+- $F_l$ - fat of low fat milk (%)
 - $S_f$ - supply from each farm (L)
 - $F_f$ - fat from each farm (%)
 
@@ -31,10 +31,10 @@ How much whole milk and low fat milk should we produce from this total supply? P
 - $P_{wf}$ - Production of whole milk from each farm (L)
 
 ### Objective function
-$$max(\sum_{f \in Farms} C_w*P_{wf}+C_l*(S_f-P_{wf}))$$
+$$max(\sum_{f \in Farms} C_w \times P_{wf}+C_l \times (S_f-P_{wf}))$$
 
 ### Constraints
-$$\sum_{f \in Farms} F_w*P_{wf} + F_l*(S_f-P_{wf}) = \sum_{f \in Farms} S_f*F_f $$
+$$\sum_{f \in Farms} F_w \times P_{wf} + F_l \times (S_f-P_{wf}) = \sum_{f \in Farms} S_f \times F_f $$
 $$\forall f \in F,\; 0 \leq P_{wf} \leq S_f$$
 
 

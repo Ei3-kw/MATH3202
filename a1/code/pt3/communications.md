@@ -43,7 +43,7 @@ How much whole milk and low fat milk, both organic and normal, should we produce
 - $C_w$ - price of whole milk ($/L)
 - $C_l$ - price of low fat milk ($/L)
 - $F_w$ - fat of whole milk (%)
-- $F_l$ - fat of ow fat milk (%)
+- $F_l$ - fat of low fat milk (%)
 - $S_f$ - supply from each farm (L)
 - $F_f$ - fat from each farm (%)
 
@@ -53,16 +53,16 @@ How much whole milk and low fat milk, both organic and normal, should we produce
 - $P_{olf}$ - Production of organic low fat milk from each farm (L)
 
 ### Objective function
-$$max(\sum_{f \in Farms} C_w*P_{wf} + C_l*(S_f-P_{wf}-P_{olf}-P_{owf}) + O_w*P_{owf} + O_l*P_{olf})$$
+$$max(\sum_{f \in Farms} C_w \times P_{wf} + C_l \times (S_f-P_{wf}-P_{olf}-P_{owf}) + O_w \times P_{owf} + O_l \times P_{olf})$$
 
 ### Constraints
-$$\sum_{f \in Farms} F_w*(P_{wf}+P_{owf}) + F_l*(S_f-P_{wf}-P_{owf}) \leq \sum_{f \in Farms} S_f*F_f$$
-$$\sum_{f \in Farms} F_w*P_{owf} + F_l*P_{olf} \leq \sum_{f \in O_f} S_f*F_f$$
-$$\forall f \in F,\; 0 \leq P_{owf} \leq S_f*O_f-P_{olf}$$
+$$\sum_{f \in Farms} F_w \times (P_{wf}+P_{owf}) + F_l \times (S_f-P_{wf}-P_{owf}) \leq \sum_{f \in Farms} S_f \times F_f$$
+$$\sum_{f \in Farms} F_w \times P_{owf} + F_l \times P_{olf} \leq \sum_{f \in O_f} S_f \times F_f$$
+$$\forall f \in F,\; 0 \leq P_{owf} \leq S_f \times O_f-P_{olf}$$
 $$\forall f \in F,\; 0 \leq P_{wf} \leq S_f-P_{owf}-P_{olf}$$
-$$\sum_{f \in F} P_{owf} \geq 3 * \sum_{f \in F} P_{olf}$$
-$$\sum_{f \in F} P_{wf} \geq 3 * \sum_{f \in F} (S_f-P_{wf}-P_{owf}-P_{olf})$$
-$$\sum_{f \in F} (P_{owf}+P_{olf}) \leq 0.15 * \sum_{f \in F} S_f$$
+$$\sum_{f \in F} P_{owf} \geq 3  \times  \sum_{f \in F} P_{olf}$$
+$$\sum_{f \in F} P_{wf} \geq 3  \times  \sum_{f \in F} (S_f-P_{wf}-P_{owf}-P_{olf})$$
+$$\sum_{f \in F} (P_{owf}+P_{olf}) \leq 0.15  \times  \sum_{f \in F} S_f$$
 
 
 
