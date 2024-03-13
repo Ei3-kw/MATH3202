@@ -18,10 +18,10 @@ F = range(len(farms))
 income = [1.10, 1.12, 1.30, 1.32]
 fat_product = [4, 1, 4, 1]
 
-# supply = [9600, 5300, 9300, 9200, 7100]
-# fat = [3.4, 3.6, 3.8, 3.6, 3.7]
-supply = [5400, 7200, 7600, 5700, 7000]
-fat = [3.8, 3.6, 3.3, 3.3, 3.7]
+supply = [9600, 5300, 9300, 9200, 7100]
+fat = [3.4, 3.6, 3.8, 3.6, 3.7]
+#supply = [5400, 7200, 7600, 5700, 7000]
+#fat = [3.8, 3.6, 3.3, 3.3, 3.7]
 
 organic_product = ["Organic" in milk[m] for m in M]
 organic_farm = [False, False, False, True, True]
@@ -49,7 +49,7 @@ for f in F:
 
 """ supply for each farm cannot be exceeded """
 for f in F:
-    model.addConstr(quicksum(X[m, f] for m in M) <= supply[f])
+    model.addConstr(quicksum(X[m, f] for m in M) == supply[f])
 
 """ the sum of all produced milk must equal the sum of supply """
 model.addConstr(quicksum(X[m, f] for m in M for f in F) == quicksum(supply[f] for f in F))
@@ -58,8 +58,8 @@ model.addConstr(quicksum(X[m, f] for m in M for f in F) == quicksum(supply[f] fo
 # organic
 model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M for f in F if organic_product[m]) 
                 <= quicksum(supply[f]*(fat[f] / 100) for f in F if organic_farm[f]))
-# non-organic
-model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M for f in F if not organic_product[m])
+# total
+model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M for f in F)
                 <= quicksum(supply[f]*(fat[f] / 100) for f in F))
 
 """ low fat can be at most 25% of total milk production (for organic and non-organic) """

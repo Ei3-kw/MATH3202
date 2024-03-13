@@ -16,6 +16,8 @@ C_w = 1.10
 C_l = 1.12
 F_w = 4.0
 F_l = 1.0
+MaxLow = 0.25
+MaxOrg = 0.15
 
 Supply = [9600, 5300, 9300, 9200, 7100]
 Fat = [3.4, 3.6, 3.8, 3.6, 3.7]
@@ -54,16 +56,16 @@ for f in F:
 m.addConstr(gp.quicksum(F_w * (w[f] + y[f]) + F_l * (x[f] + z[f]) for f in F) <= 
             gp.quicksum(Supply[f] * Fat[f] for f in F))
 
-# fat content of organic products is less than or equal to fat content of supply
+# fat content of organic products is less than or equal to fat content of organic supply
 m.addConstr(gp.quicksum(F_w * w[f] + F_l * x[f] for f in F) <= 
             gp.quicksum(Supply[f] * Fat[f] for f in F if Organic[f]))
 
 # low fat milk is 25% of the total for each of organic and normal products
-m.addConstr(0.25 * gp.quicksum(w[f] + x[f] for f in F) >= gp.quicksum(x[f] for f in F))
-m.addConstr(0.25 * gp.quicksum(y[f] + z[f] for f in F) >= gp.quicksum(z[f] for f in F))
+m.addConstr(MaxLow * gp.quicksum(w[f] + x[f] for f in F) >= gp.quicksum(x[f] for f in F))
+m.addConstr(MaxLow * gp.quicksum(y[f] + z[f] for f in F) >= gp.quicksum(z[f] for f in F))
     
 # organic products is at most 15% of all milk 
-m.addConstr(.15 * gp.quicksum(Supply[f] for f in F) - gp.quicksum(w[f] + x[f] for f in F) >= 0)
+m.addConstr(MaxOrg * gp.quicksum(Supply[f] for f in F) - gp.quicksum(w[f] + x[f] for f in F) >= 0)
 
 # Solve it!
 m.optimize()
