@@ -74,10 +74,17 @@ if m.status == gp.GRB.INFEASIBLE:
 print(f"Total income: {m.objVal}")
 print("\nBreakdown:\nCatogory               Day      Sold(L) / Demand(L)\n-------------------------------------------------")
 for t in T:
-    print(f"Whole sold          on {Days[t]}      {m.getVarByName(f'whole milk sold on {Days[t]}').X} / {Demand[t][0]}")
-    print(f"Low fat sold        on {Days[t]}      {m.getVarByName(f'low fat milk sold on {Days[t]}').X} / {Demand[t][1]}\n")
+    print(f"Whole sold          on {Days[t]}      {round(m.getVarByName(f'whole milk sold on {Days[t]}').X, 2)} / {round(Demand[t][0], 2)}")
+    print(f"Low fat sold        on {Days[t]}      {round(m.getVarByName(f'low fat milk sold on {Days[t]}').X, 2)} / {round(Demand[t][1], 2)}\n")
 
 print("\nStorage:\nCatogory               Day      Amount(L)\n-------------------------------------------------")
 for t in T:
-    print(f"wholesale           on {Days[t]}      {m.getVarByName(f'whole storage - {Days[t]}').X}")
-    print(f"low fat             on {Days[t]}      {m.getVarByName(f'low fat storage - {Days[t]}').X}\n")
+    print(f"wholesale           on {Days[t]}      {round(m.getVarByName(f'whole storage - {Days[t]}').X, 2)}")
+    print(f"low fat             on {Days[t]}      {round(m.getVarByName(f'low fat storage - {Days[t]}').X, 2)}\n")
+
+print("\nBreakdown by Farms\n-------------------------------------------------")
+for f in F:
+    print(f"\n{Farms[f]}\nCatogory               Day      Poduced(L)\n-------------------------------------------------")
+    for t in T:
+        print(f"Whole produced      on {Days[t]}      {m.getVarByName(f'wholesale whole - {Farms[f]} {Days[t]}').X}")
+        print(f"Low fat produced    on {Days[t]}      {m.getVarByName(f'wholesale low fat - {Farms[f]} {Days[t]}').X}\n")
