@@ -39,9 +39,12 @@ m.setObjective(gp.quicksum(O_w*y[f]+O_l*z[f]+C_w*x[f]+C_l*(Supply[f]-y[f]-z[f]-x
 # Add constraints
 for f in F:
     # cap on total fat
-    m.addConstr(gp.quicksum(F_w*(x[f]+y[f])+F_l*(Supply[f]-x[f]-y[f]) for f in F) <= gp.quicksum(Supply[f]*Fat[f] for f in F)) 
+    m.addConstr(gp.quicksum(F_w * (x[f] + y[f]) + F_l * (Supply[f] - x[f] - y[f]) for f in F) <= 
+                gp.quicksum(Supply[f]*Fat[f] for f in F)) 
+
     # cap on fat of organic products 
-    m.addConstr(gp.quicksum(F_w*y[f]+F_l*z[f] for f in F) <= gp.quicksum(Supply[f]*Fat[f]*Organic[f] for f in F)) 
+    m.addConstr(gp.quicksum(F_w*y[f]+F_l*z[f] for f in F) <= 
+                gp.quicksum(Supply[f]*Fat[f]*Organic[f] for f in F)) 
     
     # organic products must use only organic supply
     m.addConstr(y[f] <= Supply[f]*Organic[f]-z[f])
