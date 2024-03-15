@@ -127,12 +127,12 @@ for f in F:
 print("\nConstraint Analysis\n----------------------------------------------------------------------")
 for f in F:
     print(f"\n{Farms[f]}")
-    print(f"Category             Day     Dual     Slack      RHS      Low          Up\n----------------------------------------------------------------------")
+    print(f"Category             Day     Dual      Slack      RHS        Low        Up\n-----------------------------------------------------------------------------")
     for t in T:
-        print(f"Supply            on {Days[t]} {round(C[(t,f)].Pi, 4):8.2f}  {round(C[(t,f)].Slack, 4):8.2f}   {round(C[(t,f)].RHS, 4):8.2f}     {round(C[(t,f)].SARHSLow, 4):8.2f}     {round(C[(t,f)].SARHSUp, 4):8.2f}")
+        print(f"Supply            on {Days[t]} {round(C[(t,f)].Pi, 4):8.2f}  {round(C[(t,f)].Slack, 4):8.2f}   {round(C[(t,f)].RHS, 4):8.2f}   {round(C[(t,f)].SARHSLow, 4):8.2f}   {round(C[(t,f)].SARHSUp, 4):8.2f}")
 
 
-print(f"\nCategory             Day     Dual     Slack          RHS         Low          Up\n----------------------------------------------------------------------")
+print(f"\nCategory             Day     Dual       Slack       RHS         Low          Up\n--------------------------------------------------------------------------------")
 for t in T:
         print(f"Demand - Whole    on {Days[t]}{round(D_w[t].Pi, 4):9.2f}  {round(D_w[t].RHS, 4):9.2f}   {round(D_w[t].Slack, 4):9.2f}   {round(D_w[t].SARHSLow, 4):9.2f}   {round(D_w[t].SARHSUp, 4):9.2f}")
         print(f"Demand - Low fat  on {Days[t]}{round(D_l[t].Pi, 4):9.2f}  {round(D_l[t].RHS, 4):9.2f}   {round(D_l[t].Slack, 4):9.2f}   {round(D_l[t].SARHSLow, 4):9.2f}   {round(D_l[t].SARHSUp, 4):9.2f}")

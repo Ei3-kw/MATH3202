@@ -167,8 +167,11 @@ Using this new model, the optimised plan for your milk processing over the next 
 
 \end{multicols}
 
-The total income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week. 
+The total weekly income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week. As shown above, with this plan, milk demands for each variety are met every day except Sunday which should be a source of satisfaction for customers. 
 
 In addition to creating this model, we have perform some analysis on the data to provide insight into potential opportunities for growth. Our analysis has shown that on each day of the week except sunday, demand for both whole milk and low fat milk is being met. This is restricting profit as it is assumed in the model that demand cannot be exceeded. Thus, an oppotunity for growth exists here. Through implementing marketing strategies it may be possible to increase demand for the products, thus allowing more sales. 
 
-An opportunity for growth exists in increasing the supply from each of the farms. For example, the daily supply from Fresh Pail is currently 9300L. For every litre of milk added to this supply, an extra $0.90 can be earned. The effect of altering this constraint is bounded by different values each day. Additionally, there is slack in supply from Udder Delight on a Monday and Fresh Pail on a Thursday. 
+An opportunity for growth exists in increasing the supply from each of the farms. For example, the daily supply from Fresh Pail is currently 9300L. For every litre of milk added to this supply, an extra $0.90 can be earned on a Sunday, $0.85 on a Saturday, $0.10 on a Wednesday and $0.05 on either a Tuesday or Friday. However, it should be noted that this is not an unbounded constraint and after a certain volume of supply, this increase in profit is no longer quaranteed. The bound changes depending on the day.  
+
+In consideration of the constraint on fat percentage, each day there is left over fat from supply which is not utilised - displayed in the slack variables of the model. It is recommended that this excess fat is stored and put to use in other capacities to eliminate waste. 
+
