@@ -79,3 +79,16 @@ print("\nStorage:\nCatogory               Day      Amount(L)\n------------------
 for t in T:
     print(f"wholesale           on {Days[t]}      {m.getVarByName(f'whole storage - {Days[t]}').X}")
     print(f"low fat             on {Days[t]}      {m.getVarByName(f'low fat storage - {Days[t]}').X}\n")
+
+print("\nStorage:\nCategory               Day      Amount(L)\n----------------------------------------------------")
+for t in T:
+    print(f"Whole               on {Days[t]}      {round(m.getVarByName(f'whole storage - {Days[t]}').X, 2)}")
+    print(f"Low fat             on {Days[t]}      {round(m.getVarByName(f'low fat storage - {Days[t]}').X, 2)}\n")
+
+print("\nBreakdown by Farms\n----------------------------------------------------")
+for f in F:
+    print(f"\n{Farms[f]}\nCategory               Day      Produced(L)\n----------------------------------------------------")
+    for t in T:
+        print(f"Whole produced      on {Days[t]}      {round(m.getVarByName(f'wholesale whole - {Farms[f]} {Days[t]}').X, 2)}")
+        print(f"Low fat produced    on {Days[t]}      {round(m.getVarByName(f'wholesale low fat - {Farms[f]} {Days[t]}').X, 2)}\n")
+

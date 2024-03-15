@@ -19,25 +19,25 @@ Task:
 ## Communication 1
 Based on your initial communication, we understand you desire to determine the volume of whole and low fat milk which should be produced from your total supply to maximise income, all subject to constraints on milk fat. 
 
-Your pricing for each of the milk types - whole and low fat - indicates that low fat milk production should be maximised as it shall reap the greatest profit. However, due to the requirement that all fat of your supply is to be used, a large proportion of your supply must still be processed into whole milk to use up this fat in supply. 
+Your pricing for each of the milk types - whole and low fat - indicates that we would expect low fat milk production should be maximised as it shall reap the greatest profit. However, due to the requirement that all fat of your supply is to be used, a large proportion of your supply must still be processed into whole milk. Low fat milk only contains 1% fat so limiting production only to low fat would not utilise all fat from supply.
 
-Through mathematical modelling, it was determined that to optimise  profit, 35317L of whole milk and 5183L of low fat milk should be processed from the supply of the five farms.
+Through mathematical modelling, it was determined that to optimise  profit, 35316.67L of whole milk and 5183.33L of low fat milk should be processed from the supply of the five farms. This split of whole and low fat milk will result in an optimal income of $44653.67.
 
 ## Communication 2
 In response to Haven and Silo Springs converting to organic production and the inclusion of your new organic products, the model we provided previously has been revised to include additional constraints. 
 
-In this revised model, organic milks will now achieve the greatest profit and so, it is inferred that these products will be maximised. 
+In this revised model, organic milks will now achieve the greatest profit and so, it is inferred that these products will be maximised by the model. 
 
-We have ensured that all organic products are processed only from the supply of the organic suppliers - Haven and Silo Springs. Based on your communication with us, it was also specified that the fat content of organic product is equal to the fat content of organic supply, and similarly for non-organic product and supply. 
+In our model, have ensured that all organic products are processed only from the supply of the organic suppliers - Haven and Silo Springs - to guarantee the quality of the product. Based on your communication with us, it was also specified that the fat content of organic product is equal to the fat content of organic supply, and similarly for non-organic product and supply. 
 
-With the addition of these new constraints, our mathematical formulations suggest you process 14363.33L of whole organic milk, 1936.67L of low fat organic milk, 20953.33L of whole milk and 3246.67L of low fat milk from your total supply.
+With the addition of these new constraints, our mathematical formulations suggest you process 14363.33L of whole organic milk, 1936.67L of low fat organic milk, 20953.33L of whole milk and 3246.67L of low fat milk from your total supply. This results in an overall income of $47913.67. With the inclusion of organic productions, your projected income has increased by $3260.
 
 ## Communication 3
-Thank you for bringing these marketing restrictions to our attention. In response to these restrictions, we have revised our model. 
+Thank you for bringing these marketing restrictions to our attention. In response to these restrictions, we have once again revised our model and hope it will suit your needs. 
 
-We have added constraints on the percentage of production which can be low fat for each of organic and non-organic products. Further, it is constrained that no more that 15% of production is organic. 
+We have added constraints on the percentage of production which can be low fat for each of organic and non-organic products. Further, it is constrained that no more that 15% of production is organic so that we are following market trends as required. 
 
-The revised model suggests that from the total supply, 4556.25L of whole organic milk, 1518.75L of low fat organic milk, 25818.75L of whole milk and 8606.25L of low fat milk is processed.
+The revised model suggests that from the total supply, 4556.25L of whole organic milk, 1518.75L of low fat organic milk, 25818.75L of whole milk and 8606.25L of low fat milk is processed. Based on these numbers, an income of $45967.50 can be expected. 
 
 
 ## Communication 4
@@ -169,4 +169,6 @@ Using this new model, the optimised plan for your milk processing over the next 
 
 The total income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week. 
 
-In addition to creating this model, we have perform some analysis on the data to provide insight into potential opportunities for growth. Out analysis has shown that 
+In addition to creating this model, we have perform some analysis on the data to provide insight into potential opportunities for growth. Our analysis has shown that on each day of the week except sunday, demand for both whole milk and low fat milk is being met. This is restricting profit as it is assumed in the model that demand cannot be exceeded. Thus, an oppotunity for growth exists here. Through implementing marketing strategies it may be possible to increase demand for the products, thus allowing more sales. 
+
+An opportunity for growth exists in increasing the supply from each of the farms. For example, the daily supply from Fresh Pail is currently 9300L. For every litre of milk added to this supply, an extra $0.90 can be earned. The effect of altering this constraint is bounded by different values each day. Additionally, there is slack in supply from Udder Delight on a Monday and Fresh Pail on a Thursday. 
