@@ -1,13 +1,8 @@
 ---
 geometry: margin=2cm
-header-includes:
-    - \usepackage{multicol}
-    - \newcommand{\hideFromPandoc}[1]{#1}
-    - \hideFromPandoc{
-        \let\Begin\begin
-        \let\End\end
-      }
 ---
+## Sophie Ivanovic - 47030356
+## Jiayi WANG - 46822394
 
 # Section B: Report to the client
 
@@ -67,56 +62,30 @@ As there is no limit on production apart from the limit on supply from each farm
 
 Out devised plan using mathematical modelling is as follows:
 
-\begin{multicols}{2}
-\begin{tabular}{llll}
-\textbf{Day} & \textbf{Category} & \textbf{Sold(L)} & \textbf{Demand(L)} \\ \hline
-\textit{Mon} & Whole             & 13778            & 13778              \\
-             & Low Fat           & 3485             & 3485               \\
-             &                   &                  &                    \\
-\textit{Tue} & Whole             & 27488            & 27488              \\
-\textit{}    & Low Fat           & 6896             & 6896               \\
-             &                   &                  &                    \\
-\textit{Wed} & Whole             & 68427            & 68427              \\
-\textit{}    & Low Fat           & 17060            & 17060              \\
-             &                   &                  &                    \\
-\textit{Thu} & Whole             & 13740            & 13740              \\
-\textit{}    & Low Fat           & 3543             & 3543               \\
-             &                   &                  &                    \\
-\textit{Fri} & Whole             & 27428            & 27428              \\
-\textit{}    & Low Fat           & 6756             & 6756               \\
-             &                   &                  &                    \\
-\textit{Sat} & Whole             & 27519            & 27519              \\
-\textit{}    & Low Fat           & 6794             & 6794               \\
-             &                   &                  &                    \\
-\textit{Sun} & Whole             & 81853            & 82193              \\
-             & Low Fat           & 20733            & 20733             
+\begin{tabular}{lllll}
+\textbf{Day} & \textbf{Category} & \textbf{Sold(L)} & \textbf{Demand(L)} & \textbf{Stored(L)} \\ \hline
+\textit{Mon} & Whole             & 13778            & 13778              & 18774.33           \\
+             & Low Fat           & 3485             & 3485               & 10462.6            \\
+             &                   &                  &                    &                    \\
+\textit{Tue} & Whole             & 27488            & 27488              & 31039.67           \\
+\textit{}    & Low Fat           & 6896             & 6896               & 10313.33           \\
+             &                   &                  &                    &                    \\
+\textit{Wed} & Whole             & 68427            & 68427              & 2366               \\
+\textit{}    & Low Fat           & 17060            & 17060              & 0                  \\
+             &                   &                  &                    &                    \\
+\textit{Thu} & Whole             & 13740            & 13740              & 25826              \\
+\textit{}    & Low Fat           & 3543             & 3543               & 5757               \\
+             &                   &                  &                    &                    \\
+\textit{Fri} & Whole             & 27428            & 27428              & 37218.67           \\
+\textit{}    & Low Fat           & 6756             & 6756               & 678.3              \\
+             &                   &                  &                    &                    \\
+\textit{Sat} & Whole             & 27519            & 27519              & 49453              \\
+\textit{}    & Low Fat           & 6794             & 6794               & 6633               \\
+             &                   &                  &                    &                    \\
+\textit{Sun} & Whole             & 81853            & 82193              & 0                  \\
+             & Low Fat           & 20733            & 20733              & 0                 
 \end{tabular}
 
-\begin{tabular}{lll}
-\textbf{Day} & \textbf{Catogory} & \textbf{Amount(L)} \\ \hline
-\textit{Mon} & Whole             & 18774.33           \\
-             & Low Fat           & 10462.6            \\
-\textit{}    &                   &                    \\
-\textit{Tue} & Whole             & 31039.67           \\
-\textit{}    & Low Fat           & 10313.33           \\
-             &                   &                    \\
-\textit{Wed} & Whole             & 2366               \\
-\textit{}    & Low Fat           & 0                  \\
-             &                   &                    \\
-\textit{Thu} & Whole             & 25826              \\
-\textit{}    & Low Fat           & 5757               \\
-             &                   &                    \\
-\textit{Fri} & Whole             & 37218.67           \\
-\textit{}    & Low Fat           & 678.3              \\
-             &                   &                    \\
-\textit{Sat} & Whole             & 49453              \\
-\textit{}    & Low Fat           & 6633               \\
-             &                   &                    \\
-\textit{Sun} & Whole             & 0                  \\
-             & Low Fat           & 0                 
-\end{tabular}
-
-\end{multicols}
 
 
 ## Communication 5
@@ -126,58 +95,31 @@ To address the constraint, we have enforced that each day the cumulative sold mi
 
 Using this new model, the optimised plan for your milk processing over the next seven days, split into milk to sell and to store, is as follows:
 
-\begin{multicols}{2}
 
-\begin{tabular}{llll}
-\textbf{Day} & \textbf{Category} & \textbf{Sold(L)} & \textbf{Demand(L)} \\ \hline
-\textit{Mon} & Whole             & 13778            & 13778              \\
-             & Low Fat           & 3485             & 3485               \\
-             &                   &                  &                    \\
-\textit{Tue} & Whole             & 27488            & 27488              \\
-\textit{}    & Low Fat           & 6896             & 6896               \\
-             &                   &                  &                    \\
-\textit{Wed} & Whole             & 68427            & 68427              \\
-\textit{}    & Low Fat           & 17060            & 17060              \\
-             &                   &                  &                    \\
-\textit{Thu} & Whole             & 13740            & 13740              \\
-\textit{}    & Low Fat           & 3543             & 3543               \\
-             &                   &                  &                    \\
-\textit{Fri} & Whole             & 27428            & 27428              \\
-\textit{}    & Low Fat           & 6756             & 6756               \\
-             &                   &                  &                    \\
-\textit{Sat} & Whole             & 27519            & 27519              \\
-\textit{}    & Low Fat           & 6794             & 6794               \\
-             &                   &                  &                    \\
-\textit{Sun} & Whole             & 72267            & 82193              \\
-             & Low Fat           & 20733            & 20733             
+\begin{tabular}{lllll}
+\textbf{Day} & \textbf{Category} & \textbf{Sold(L)} & \textbf{Demand(L)} & \textbf{Stored(L)} \\ \hline
+\textit{Mon} & Whole             & 13778            & 13778              & 19975              \\
+             & Low Fat           & 3485             & 3485               & 6896               \\
+             &                   &                  &                    &                    \\
+\textit{Tue} & Whole             & 27488            & 27488              & 32240.33           \\
+\textit{}    & Low Fat           & 6896             & 6896               & 6746.67            \\
+             &                   &                  &                    &                    \\
+\textit{Wed} & Whole             & 68427            & 68427              & 0                  \\
+\textit{}    & Low Fat           & 17060            & 17060              & 0                  \\
+             &                   &                  &                    &                    \\
+\textit{Thu} & Whole             & 13740            & 13740              & 15241              \\
+\textit{}    & Low Fat           & 3543             & 3543               & 6756               \\
+             &                   &                  &                    &                    \\
+\textit{Fri} & Whole             & 27428            & 27428              & 27519              \\
+\textit{}    & Low Fat           & 6756             & 6756               & 6794               \\
+             &                   &                  &                    &                    \\
+\textit{Sat} & Whole             & 27519            & 27519              & 39753.33           \\
+\textit{}    & Low Fat           & 6794             & 6794               & 6746.67            \\
+             &                   &                  &                    &                    \\
+\textit{Sun} & Whole             & 72267            & 82193              & 0                  \\
+             & Low Fat           & 20733            & 20733              & 0                 
 \end{tabular}
 
-
-\begin{tabular}{lll}
-\textbf{Day} & \textbf{Catogory} & \textbf{Amount(L)} \\ \hline
-\textit{Mon} & Whole             & 19975              \\
-             & Low Fat           & 6896               \\
-\textit{}    &                   &                    \\
-\textit{Tue} & Whole             & 32240.33           \\
-\textit{}    & Low Fat           & 6746.67            \\
-             &                   &                    \\
-\textit{Wed} & Whole             & 0                  \\
-\textit{}    & Low Fat           & 0                  \\
-             &                   &                    \\
-\textit{Thu} & Whole             & 15241              \\
-\textit{}    & Low Fat           & 6756               \\
-             &                   &                    \\
-\textit{Fri} & Whole             & 27519              \\
-\textit{}    & Low Fat           & 6794               \\
-             &                   &                    \\
-\textit{Sat} & Whole             & 39753.33           \\
-\textit{}    & Low Fat           & 6746.67            \\
-             &                   &                    \\
-\textit{Sun} & Whole             & 0                  \\
-             & Low Fat           & 0                 
-\end{tabular}
-
-\end{multicols}
 
 The total weekly income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week. As shown above, with this plan, milk demands for each variety are met every day except Sunday which should be a source of satisfaction for customers. 
 
