@@ -11,11 +11,6 @@ header-includes:
 
 # Section B: Report to the client
 
-Task:
-\begin{enumerate}
-    \item Brief insights into the: solution, such as identifying key constraints or explaining the effects of the additional requirements and options on costs. 3 marks
-\end{enumerate}
-
 ## Communication 1
 Based on your initial communication, we understand you desire to determine the volume of whole and low fat milk which should be produced from your total supply to maximise income, all subject to constraints on milk fat. 
 
@@ -37,7 +32,26 @@ Thank you for bringing these marketing restrictions to our attention. In respons
 
 We have added constraints on the percentage of production which can be low fat for each of organic and non-organic products. Further, it is constrained that no more that 15% of production is organic so that we are following market trends as required. 
 
-The revised model suggests that from the total supply, 4556.25L of whole organic milk, 1518.75L of low fat organic milk, 25818.75L of whole milk and 8606.25L of low fat milk is processed. Based on these numbers, an income of $45967.50 can be expected. 
+Based on our model, the optimal income from the given supply under current regulation is $45967.50. The following table is a plan that would achieve such income.
+
+### Table1.1.1
+\begin{tabular}{l|llllll}
+                               & \textbf{Barnwood} & \textbf{Thistlebrook} & \textbf{Rustic Ranch} & \textbf{Haven} & \textbf{Silo Springs} & \textit{\textbf{Total}} \\ \hline
+\textbf{Organic Whole Milk}    & 0                 & 0                     & 0                     & 0              & 4556.25               & 4556.25                 \\
+\textbf{Organic Low Fat Milk}  & 0                 & 0                     & 0                     & 1518.75        & 0                     & 1518.75                 \\
+\textbf{Standard Whole Milk}   & 6293.75           & 0                     & 9300                  & 7681.25        & 2543.75               & 25818.75                \\
+\textbf{Standard Low Fat Milk} & 3306.25           & 5300                  & 0                     & 0              & 0                     & 8606.25                
+\end{tabular}
+
+The revised model suggests that from the total supply, 4556.25L of whole organic milk, 1518.75L of low fat organic milk, 25818.75L of whole milk and 8606.25L of low fat milk is processed.
+
+
+### Sensitivity Analysis
+Due to stringent regulations, a significant portion of organic milk supply is diverted for the production of non-organic milk, thereby compromising overall income for producers. Total income would increase $81 per 1% up until 40.25% (23.37%) to reach the maximal value of $48012.50 ($46645.47)
+
+To mitigate this issue, actions can be taken to loosen the regulations, such as advocating for an increase in the percentage of organic milk allowed and collaborating with decision-makers. Additionally, promoting organic farms could bolster support for organic milk production.
+
+We do not have information regarding the cost of producing organic VS non organic milk. If the cost is higher for organic milk, it is advisable to reduce the organic supply under current regulation - organic products can make up at most 15% of all milk sold.
 
 
 ## Communication 4
@@ -54,7 +68,6 @@ As there is no limit on production apart from the limit on supply from each farm
 Out devised plan using mathematical modelling is as follows:
 
 \begin{multicols}{2}
-
 \begin{tabular}{llll}
 \textbf{Day} & \textbf{Category} & \textbf{Sold(L)} & \textbf{Demand(L)} \\ \hline
 \textit{Mon} & Whole             & 13778            & 13778              \\
@@ -78,7 +91,6 @@ Out devised plan using mathematical modelling is as follows:
 \textit{Sun} & Whole             & 81853            & 82193              \\
              & Low Fat           & 20733            & 20733             
 \end{tabular}
-
 
 \begin{tabular}{lll}
 \textbf{Day} & \textbf{Catogory} & \textbf{Amount(L)} \\ \hline
