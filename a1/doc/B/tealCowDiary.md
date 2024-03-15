@@ -110,9 +110,9 @@ Out devised plan using mathematical modelling is as follows:
 ## Communication 5
 We recognise the importance of this constraint on duration of milk storage and have once again updated out model to reflect this requirement. 
 
-To address the constraint, we have enforced that each day the cumulative sold milk must include any milk stored from yesterday. This ensures that there will never be milk in storage for more than one day and no stored milk goes towaste. 
+To address the constraint, we have enforced that each day the cumulative sold milk must include any milk stored from the previous day. This ensures that there will never be milk in storage for more than one day, and no stored milk goes to waste. 
 
-Using this new model, the optimised plan for your milk processing over the next seven days is as follows:
+Using this new model, the optimised plan for your milk processing over the next seven days, split into milk to sell and to store, is as follows:
 
 \begin{multicols}{2}
 
@@ -166,3 +166,7 @@ Using this new model, the optimised plan for your milk processing over the next 
 \end{tabular}
 
 \end{multicols}
+
+The total income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week. 
+
+In addition to creating this model, we have perform some analysis on the data to provide insight into potential opportunities for growth. Out analysis has shown that 

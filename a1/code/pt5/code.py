@@ -52,11 +52,20 @@ m.setObjective(gp.quicksum(W_w * a[t] + W_l * b[t] for t in T) -    # income fro
                gp.GRB.MAXIMIZE)
 
 # Add constraints
+
+C = {}      # constraints on supply
+D_w = {}    # constraints on demand for whole milk 
+D_l = {}    # constraints on demand for low fat milk
+
 for t in T:
+    
+    # each day, the volume of sold milk for each of the varieties cannot exceed demand for that variety
+    D_w[t] = m.addConstr(a[t] <= Demand[t])
+    D_l[t] = m.addConstr(a[t] <= Demand[t])
 
     # the total milk processed each day from each farm is less than or equal to the daily supply of that farm
     for f in F:
-        m.addConstr(x[t,f] + y[t,f] <= Supply[f])
+        C[(t,f)] = m.addConstr(x[t,f] + y[t,f] <= Supply[f])
     
     # cumulative fat content of processed milk is less than or equal to the fat content of supply
     m.addConstr(gp.quicksum(F_w * x[t,f] + F_l * y[t,f] for f in F) <=
@@ -76,6 +85,7 @@ for t in T:
         m.addConstr(a[t] >= z[t-1])
         m.addConstr(b[t] >= w[t-1])
 
+   
 # Solve it!
 m.optimize()
 
@@ -84,20 +94,45 @@ if m.status == gp.GRB.INFEASIBLE:
     print("The model is infeasible.")  
     exit()
 
-print(f"Total income: {m.objVal}")
-print("\nBreakdown:\nCategory               Day      Sold(L) / Demand(L)\n-------------------------------------------------")
+print("\nTotals\n----------------------------------------------------")
+print(f"Total income: {round(m.objVal, 2)}")
+print(f"\nTotal whole milk sold:   {round(sum(m.getVarByName(f'whole milk sold on {Days[t]}').X for t in T), 2)}")
+print(f"Total low fat milk sold: {round(sum(m.getVarByName(f'low fat milk sold on {Days[t]}').X for t in T), 2)}")
+
+print("\nWeekly breakdown\n----------------------------------------------------")
+print("\nSales:\nCategory               Day      Sold(L) / Demand(L)\n----------------------------------------------------")
 for t in T:
     print(f"Whole sold          on {Days[t]}      {round(m.getVarByName(f'whole milk sold on {Days[t]}').X, 2)} / {round(Demand[t][0], 2)}")
     print(f"Low fat sold        on {Days[t]}      {round(m.getVarByName(f'low fat milk sold on {Days[t]}').X, 2)} / {round(Demand[t][1], 2)}\n")
 
-print("\nStorage:\nCategory               Day      Amount(L)\n-------------------------------------------------")
+print("\nStorage:\nCategory               Day      Amount(L)\n----------------------------------------------------")
 for t in T:
-    print(f"wholesale           on {Days[t]}      {round(m.getVarByName(f'whole storage - {Days[t]}').X, 2)}")
-    print(f"low fat             on {Days[t]}      {round(m.getVarByName(f'low fat storage - {Days[t]}').X, 2)}\n")
+    print(f"Whole               on {Days[t]}      {round(m.getVarByName(f'whole storage - {Days[t]}').X, 2)}")
+    print(f"Low fat             on {Days[t]}      {round(m.getVarByName(f'low fat storage - {Days[t]}').X, 2)}\n")
 
-print("\nBreakdown by Farms\n-------------------------------------------------")
+print("\nBreakdown by Farms\n----------------------------------------------------")
 for f in F:
-    print(f"\n{Farms[f]}\nCategory               Day      Produced(L)\n-------------------------------------------------")
+    print(f"\n{Farms[f]}\nCategory               Day      Produced(L)\n----------------------------------------------------")
     for t in T:
-        print(f"Whole produced      on {Days[t]}      {m.getVarByName(f'wholesale whole - {Farms[f]} {Days[t]}').X}")
-        print(f"Low fat produced    on {Days[t]}      {m.getVarByName(f'wholesale low fat - {Farms[f]} {Days[t]}').X}\n")
+        print(f"Whole produced      on {Days[t]}      {round(m.getVarByName(f'wholesale whole - {Farms[f]} {Days[t]}').X, 2)}")
+        print(f"Low fat produced    on {Days[t]}      {round(m.getVarByName(f'wholesale low fat - {Farms[f]} {Days[t]}').X, 2)}\n")
+
+
+
+print("\nConstraint Analysis\n--------------------------------------------------------------------")
+for f in F:
+    print(f"\n{Farms[f]}")
+    print(f"Category             Day       Dual       Slack        Low          Up\n--------------------------------------------------------------------")
+    for t in T:
+        print(f"Supply            on {Days[t]}   {round(C[(t,f)].Pi, 4):8.2f}   {round(C[(t,f)].Slack, 4):8.2f}     {round(C[(t,f)].SARHSLow, 4):8.2f}     {round(C[(t,f)].SARHSUp, 4):8.2f}")
+        print(f"Demand - Whole    on {Days[t]}   {round(D_w[t].Pi, 4):8.2f}   {round(D_w[t].Slack, 4):8.2f}     {round(D_w[t].SARHSLow, 4):8.2f}     {round(D_w[t].SARHSUp, 4):8.2f}")
+        print(f"Demand - Low fat  on {Days[t]}   {round(D_l[t].Pi, 4):8.2f}   {round(D_l[t].Slack, 4):8.2f}     {round(D_l[t].SARHSLow, 4):8.2f}     {round(D_l[t].SARHSUp, 4):8.2f}")
+
+print("\nVariable Analysis\n--------------------------------------------------------------------")
+print(f"Category              Day      RC        Low       Obj       Up\n--------------------------------------------------------------------")
+for t in T:
+    #print(f"\n{Days[t]}\n----------------------------------------------------------------")
+    print(f"Whole sold         on {Days[t]}     {round(a[t].RC, 4):5.2f}     {round(a[t].SAObjLow, 4):5.2f}     {round(a[t].Obj, 4):5.2f}     {round(a[t].SAObjUp, 4):5.2f}")
+    print(f"Low fat sold       on {Days[t]}     {round(b[t].RC, 4):5.2f}     {round(b[t].SAObjLow, 4):5.2f}     {round(b[t].Obj, 4):5.2f}     {round(b[t].SAObjUp, 4):5.2f}")
+    print(f"Whole stored       on {Days[t]}     {round(z[t].RC, 4):5.2f}     {round(z[t].SAObjLow, 4):5.2f}     {round(z[t].Obj, 4):5.2f}     {round(z[t].SAObjUp, 4):5.2f}")
+    print(f"Low fat stored     on {Days[t]}     {round(w[t].RC, 4):5.2f}     {round(w[t].SAObjLow, 4):5.2f}     {round(w[t].Obj, 4):5.2f}     {round(w[t].SAObjUp, 4):5.2f}\n")
