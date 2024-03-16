@@ -40,7 +40,7 @@ header-includes:
 - $z_{f}$ - volume of normal low fat milk produced from farm $f \in F$ (L) 
 
 ### Objective function
-The goal is to determine the required volumes of milk of each variety to be processed from supply such that the overall income is maximised. 
+The goal of the mathematical model is to determine the required volumes of milk of each variety to be processed from supply such that the overall daily income is optimised. 
 $$
 \textrm{max} \bigg( \sum_{f \in F} 
     O_{w} \times w_{f} + O_{l} \times x_{f} +
@@ -48,32 +48,32 @@ $$
 $$
 
 ### Constraints
-- For each farm, the sum of all processed milk is equal to the supply. This ensures supply is not wasted.  
+- For each farm, the sum of all processed milk must be equal to the supply. This ensures supply is not wasted.  
 $$ S_{f} = w_{f} + x_{f} + y_{f} + z_{f}, \quad \forall \; f \in F $$
 
-- For non-organic farms, the volume of organic whole and low fat milk processed from its supply must be zero. 
+- Since organic products can only be produced from organic supply, for non-organic farms, the volume of organic whole and low fat milk processed from its supply must be zero. 
 $$ w_{f} = 0, \quad \forall f \in F \textrm{ if not } Org_{f} $$
 $$ x_{f} = 0, \quad \forall f \in F \textrm{ if not } Org_{f} $$
 
-- The supplied milk is processed into whole milk and low fat milk so that the total milk fat content of production is at most the total milk fat of the input - excess milk fat can be potentially used for other purposes.
+- Supplied milk is processed into whole milk and low fat milk such that the total milk fat content of production is at most the total milk fat of the input (i.e., the total milk fat of supply) - excess milk fat can be potentially used for other purposes.
 $$
 \sum_{f \in F} 
     F_{w} \times (w_{f} + y_{f}) + 
     F_{l} \times (x_{f} + z_{f}) \leq 
-    \sum_{f \in F} (w_{f} + x_{f} + y_{f} + z_{f}) \times F_{f}
+    \sum_{f \in F} S_{f} \times F_{f}
 $$
 
-- The percentage milk fat in organic products must be less than or equal to the percentage milk fat of their input (since organic products can only be produced from organic supply).
+- The total milk fat of organic products must be less than or equal to the total milk fat of their input (since organic products can only be produced from organic supply).
 $$
 \sum_{f \in F} F_{w} \times w_{f} + F_{l} \times x_{f} \leq 
-\sum_{f \in F \textrm{ if } Org_{f}} (w_{f} + x_{f}) \times F_{f}
+\sum_{f \in F} (w_{f} + x_{f}) \times F_{f}
 $$
 
-- Low fat milk can make up at most 25% of the total of low fat and whole milk, for each of organic and normal products.
+- Due to marketing restrictions, low fat milk can make up at most 25% of the total produced milk each day, for each of organic and normal products.
 $$ \textrm{MaxPercentLow} \times \bigg( \sum_{f \in F} w_{f} + x_{f} \bigg) \geq \sum_{f \in F} x_{f} $$
 $$ \textrm{MaxPercentLow} \times \bigg( \sum_{f \in F} y_{f} + z_{f} \bigg) \geq \sum_{f \in F} z_{f} $$
 
-- Organic products can make up at most 15% of all milk sold.
+- Organic products can make up at most 15% of all milk sold. Since all of the supply is used, $S_{f}$ is used in this constraint to represent the total milk sold from each farm. 
 $$\textrm{MaxPercentOrg} \times \bigg( \sum_{f \in F} S_{f} \bigg) - \bigg( \sum_{f \in F} w_{f} + x_{f} \bigg) \geq 0$$
 
 ## Communication 5
@@ -89,8 +89,8 @@ $$\textrm{MaxPercentOrg} \times \bigg( \sum_{f \in F} S_{f} \bigg) - \bigg( \sum
 - $F_{l}$ - fat content of low fat milk (%)
 - $C_{s}$ - cost of storage ($/L/day)
 
-- $Dw_{t}$ - demand for whole milk each day (L)
-- $Dl_{t}$ - demand for low fat milk each day (L)
+- $Dw_{t}$ - demand for whole milk each day $t \in T$ (L)
+- $Dl_{t}$ - demand for low fat milk each day $t \in T$ (L)
 - $S_{f}$ - supply from each farm $f \in F$ (L)
 - $F_{f}$ - fat content of milk from each farm $f \in F$ (%)
 
@@ -105,7 +105,7 @@ $$\textrm{MaxPercentOrg} \times \bigg( \sum_{f \in F} S_{f} \bigg) - \bigg( \sum
 - $b_{t}$ - total volume of low fat milk sold on day $t \in T$ (L)
 
 ### Objective function
-The goal of the program is to determine the volume of each variety of milk that needs to be processed from the daily supply to achieve a maximal profit, and hence to establish what this optimal profit is. 
+The goal of the mathematical model is to determine the volume of each variety of milk that needs to be processed from the daily supply to achieve a maximal profit, and hence to establish what this optimal profit is. 
 $$
 \textrm{max} \bigg( \sum_{t \in D} 
     W_{w} \times  a_{t} + 
@@ -114,32 +114,34 @@ $$
 $$
 
 ### Constraints
-- Each day, for each of the milk varieties, the volume of sold milk cannot exceed the demand for that variety
-$$a_{t} \leq Dw_{t}, \quad \forall \; t \in D$$
-$$b_{t} \leq Dl_{t}, \quad \forall \; t \in D$$
+- Each day, for each of the milk varieties, the volume of sold milk cannot exceed the demand for that variety.
+$$a_{t} \leq Dw_{t}, \quad \forall \; t \in T$$
+$$b_{t} \leq Dl_{t}, \quad \forall \; t \in T$$
 
-- The total milk processed each day from each farm must be less than or equal to that farm's daily supply  
-$$x_{tf} + y_{tf} \leq S_{f}, \quad \forall \; f \in F, \; t \in D$$
+- The total milk processed each day from each farm must be less than or equal to that farm's daily supply.
+$$x_{tf} + y_{tf} \leq S_{f}, \quad \forall \; f \in F, \; t \in T$$
 
-- Each day, the cumulative fat content of processed milk must be less than or equal to the fat content of its input. It is assumed in this constraint that milk fat left over from previous days cannot be used in processing on subsequent days. 
-$$\sum_{f \in F} \big( F_{w} \times x_{tf} + F_{l} \times y_{tf} \big) \leq \sum_{f \in F} S_{f} \times F{f}$$
+- Each day, the cumulative fat content of processed milk must be less than or equal to the fat content of its input. It is assumed in this constraint that milk fat left over from previous days cannot be used in processing on subsequent days. Additionally, unlike in communication 3, supply cannot be used as a stand-in for input as it is not guaranteed that all of the supply is utilised.
+$$\sum_{f \in F} \big( F_{w} \times x_{tf} + F_{l} \times y_{tf} \big) \leq \sum_{f \in F} (x_{tf} + y_{tf}) \times F{f}$$
 
-*Monday:*
-- On mondays, for each milk variety, the volume of stored milk must equal processed milk minus sold milk 
+*Monday:* \medbreak
+
+- On Mondays, for each milk variety, the volume of stored milk must equal the processed milk minus the milk that is sold. Realistically, we would have stored milk from Sunday that can be sold on Monday, but we do not have access to this data.  
 $$
-z_{t} = \bigg( \sum_{f \in F} x_{tf} \bigg) - a_{t}, \quad \forall \; t \in D, \quad \textrm{ and } \quad
-w_{t} = \bigg( \sum_{f \in F} y_{tf} \bigg) - b_{t}, \quad \forall \; t \in D
-$$
-
-*Other Days:*
-- On days other than monday, for each milk variety, the volume of stored milk must equal the sum of the processed milk from that day and stored milk from the previous day (this makes up all available milk to be sold) minus sold milk
-$$
-z_{t} = \bigg( \sum_{f \in F} x_{tf} \bigg) + z_{t-1} - a_{t}, \quad \forall \; t \in D, \quad \textrm{ and } \quad w_{t} = \bigg( \sum_{f \in F} y_{tf} \bigg) + w_{t-1} - b_{t}, \quad \forall \; t \in D
+z_{t} = \bigg( \sum_{f \in F} x_{tf} \bigg) - a_{t}, \quad \forall \; t \in T, \quad \textrm{ and } \quad
+w_{t} = \bigg( \sum_{f \in F} y_{tf} \bigg) - b_{t}, \quad \forall \; t \in T
 $$
 
-- For each milk variety, the total sold milk must be greater than or equal to the stored milk from the previous day (as this milk has to be sold and cannot remain in storage)
+*Other Days:* \medbreak
+
+- On days other than Monday, for each milk variety, the volume of stored milk must equal the sum of the processed milk from that day and stored milk from the previous day (this makes up all available milk to be sold) minus the sold milk.
 $$
-a_{t} = z_{t-1}, \quad \forall \; t \in D, \quad \textrm{ and } \quad b_{t} = w_{t-1}, \quad \forall \; t \in D
+z_{t} = \bigg( \sum_{f \in F} x_{tf} \bigg) + z_{t-1} - a_{t}, \quad \forall \; t \in T, \quad \textrm{ and } \quad w_{t} = \bigg( \sum_{f \in F} y_{tf} \bigg) + w_{t-1} - b_{t}, \quad \forall \; t \in T
+$$
+
+- For each milk variety, the total sold milk must be greater than or equal to the stored milk from the previous day (as this milk has to be sold and cannot remain in storage).
+$$
+a_{t} \geq z_{t-1}, \quad \forall \; t \in D, \quad \textrm{ and } \quad b_{t} \geq w_{t-1}, \quad \forall \; t \in T
 $$
 
 \newpage 
@@ -149,31 +151,31 @@ $$
 ## Communication 1
 Based on your initial communication, we understand you desire to determine the volume of whole and low fat milk which should be produced from your total daily supply to maximise income, all subject to constraints on milk fat and supply. 
 
-Your pricing for each of the milk types - $1.10 for whole and $1.12 for low fat milk - indicates that low fat milk production should be maximised, as it shall reap the greatest profit for your dairy. However, to ensure that all fat content of your supply is used, as requested, a large proportion of your supply must still be processed into whole milk. Low fat milk only contains 1% fat, while your supply has an average fat content of 3.62% at each farm, so limiting production only to low fat would not utilise all fat from supply and would leave wastage which should be avoided.
+Your pricing for each of the milk types - $1.10 for whole and $1.12 for low fat milk - indicates that low fat milk production should be maximised, as it shall reap the greatest profit for your dairy. However, to ensure that all fat content of your supply is used, as requested, a large proportion of your supply must still be processed into whole milk. Low fat milk only contains 1% fat, while your supply has an average fat content of 3.62% at each farm, so limiting production only to low fat would not utilise all fat from supply and would leave wastage which must be avoided as per your requirements.
 
-In consideration of all constraints you provided to us, we have devised a mathematical model to optimise your daily income while ensuring that all of your supply, including the fat cotent, is used, and the outcome of this model reflects our above expectations. 
+In consideration of all of constraints you provided to us, we devised a mathematical model to optimise your daily income while ensuring that all of your supply, including the fat cotent, is used, and the outcome of this model reflects our above expectations. 
 
 Our model reveals that the optimal daily income for your dairy is $44653.67. To achieve this optimal income, out of the total daily supply of 40500L from the five dairy farms, 35316.67L of whole milk and 5183.33L of low fat milk should be processed. In other words, 87.20% of supply should be processed into whole milk and 12.80% into low fat milk. 
 
-Evidently, the proportion of supply that is processed into low fat milk is low compared to whole milk, despite the higher selling price of this product. As was inferred, the restriction you provided on fat content greatly decreases the proportion of low fat milk that can be processed, thus restricting daily income. We suggest that this restriction on fat content is loosened to allow for more production of low fat milk. 
+Evidently, the proportion of supply that is processed into low fat milk is low compared to whole milk, despite the higher selling price of this product. As was inferred, the restriction you provided on fat content greatly decreases the proportion of low fat milk that can be processed, thus restricting daily income. If you desire a higher optimal income, we suggest that this restriction on fat content is loosened to allow for more production of low fat milk. 
 
 ## Communication 2
 In response to Haven and Silo Springs converting to organic production and with the inclusion of your new organic products, we revised the model we provided previously to include additional constraints and variables to match your new circumstance.  
 
-In this revised model, organic milks will now achieve the greatest profit since they sell for $0.20 more than their non-organic equivalents and so, it is evident that maximising the volume of organic products produced will maximise income. Any non-organic milk production in an optimised plan will be due to other restrictions such as those on organic supply. 
+In this revised model, organic milks now achieve the greatest profit since they sell for $0.20 more than their non-organic equivalents and so, it is evident that maximising the volume of organic products produced will maximise income. Any non-organic milk production in an optimised plan will be due to other restrictions such as those on organic supply. 
 
-The revised mathematical model ensures that all organic products are processed only from the supply of the organic suppliers - Haven and Silo Springs - to guarantee the quality of the product as requested. Based on your communication with us, it has also been specified that for each farm, the total fat content of product is equal to the fat content of supply and further, the fat content of organic product is equal to the fat content of its input.
+The revised mathematical model ensures that all organic products are processed only from the supply of the organic suppliers - Haven and Silo Springs - to guarantee the quality of the product as requested. Based on your communication with us, it was also specified that for each farm, the total fat content of product is equal to the fat content of supply and further, the fat content of organic product is equal to the fat content of its input.
 
-With the addition of these new constraints, our formulations suggest that your daily supply is processed into product in the following manner: 14363.33L of whole organic milk, 1936.67L of low fat organic milk, 20953.33L of whole milk and 3246.67L of low fat milk. With this production plan, an optimal daily income of $47913.67 is achieved. With the inclusion of organic productions, we are pleased to report that your projected income has increased by $3260.
+With the addition of these new constraints, our formulations suggest that to achieve an optiminal income, your daily supply should be processed into product in the following manner: 14363.33L of whole organic milk, 1936.67L of low fat organic milk, 20953.33L of whole milk and 3246.67L of low fat milk. With this production plan, an optimal daily income of $47913.67 is achieved. With the inclusion of organic productions, we are pleased to report that your projected income has increased by $3260.
 
-At this stage, we noticed that due to your specified constraints on production - specifically the limit on organic supply and a requirement that all fat content of supply is used - only 40.25% of your product is organic and 12.80% is low fat despite these being the varieties with the highest selling point. Similarly to before, if you were to consider weakening the arforementioned constraints, the optimal daily income of your dairy would increase. 
+At this stage, we noticed that due to your specified constraints on production - specifically the limit on organic supply and a requirement that all fat content of supply is used - only 40.25% of your product is organic and 12.80% is low fat, despite these being the varieties with the highest selling point. Similarly to before, if you were to consider weakening the aforementioned constraints, the optimal daily income of your dairy would increase. 
 
 ## Communication 3
 In response to the marketing restrictions that you brought to our attention in your third communication with us, we once again revised our model and hope it will now suit your needs. 
 
-In the third revision of our model, we added constraints on the percentage of production which can be low fat for each of organic and non-organic products - namely, low fat production is capped at 25%. Further, it was specified that no more than 15% of daily milk production could be organic so to follow market trends as required. This constraint in particular had a significant impact on the optimal production plan since the previous optimal plan resulted in 40.25% of production being organic. 
+In the third revision of our model, we added constraints on the percentage of production which can be low fat for each of organic and non-organic products - namely, low fat production is capped at 25%. Further, it was specified that no more than 15% of daily milk production could be organic, so to follow market trends as required. This constraint in particular had a significant impact on the optimal production plan since the previous optimal plan resulted in 40.25% of production being organic. 
 
-Based on the new model, the optimal income that can be achieved from daily supply is $45967.50. The following table provides an example production plan broken down by supplier which can achieve the optimal income. 
+Based on the new model, the optimal income that can be achieved from daily supply is $45967.50. As expected, this is a decrease from the previously recorded optimal income as your more expensive products are limited with these new market restrictions. The following table provides an example production plan broken down by supplier which can achieve the optimal income of $45967.50. 
 
 ### Table 1 - Example breakdown of daily milk processing by supplier 
 \begin{tabular}{l|llllll}
@@ -190,7 +192,7 @@ In addition to creating a model to optimise profit, we conducted analysis on var
 
 As depicted by the outcome of the model, due to stringent regulations on organic production, a significant portion of organic milk supply is diverted for the production of non-organic milk, thereby decreasing overall income. Considering the restriction of organic production to 15% of the total production, our analysis suggests that total income would increase by $81.00 per 1% increase in this percent up to a cap of 40.25%. For example, allowing 20% of production to be organic would result in a revised income of $46372.5, which is a $405 increase from the previous optimal income. The maximum income that can be achieved by adjusting this constraint is $48012.50, corresponding to 40.25% of total production being organic as opposed to 15%. 
 
-We understand that marketing restrictions prevent such an adjustment from being made at this point; however, it may be possible to take actions to loosed these restrictions, such as utilising marketing campaigns to promote organic products and collaborating with decision makers behind this regulation. 
+We understand that marketing restrictions prevent such an adjustment from being made at this point; however, it may be possible to take actions to loosen these restrictions, such as utilising marketing campaigns to promote organic products and collaborating with decision makers behind this regulation. 
 
 ## Communication 4
 We were pleased to hear of your increased revenue and devised a new model to optimise your operations based on your new six suppliers and the changed requirements of your operation. 
@@ -199,11 +201,7 @@ In this new model, as requested, we removed all constraints regarding organic pr
 
 Similarly to our models for the previous stages of your organisational growth, it was ensured that the cumulative percentage fat of product is less than or equal to the percentage fat of its input to reflect what is realistically possible. 
 
-The wholesale price of low fat milk is greater than the wholesale price of whole milk, so it is intuitive that in an optimal solution, the proporthe solution maximises low fat milk production and this is reflected in the results. 
-
-As there is no limit on production apart from the limit on supply from each farm, the final solution reflects that demand is met on each day.
-
-Out devised plan using mathematical modelling is as follows:
+Using mathematical modelling, it was determined that the optimal weekly income subject to the specified constraints is $284029.14. A production plan for the week which achieves this income is as follows:
 
 ### Table 2 - Seven day plan for communication 4
 \begin{tabular}{lllll}
@@ -229,6 +227,8 @@ Out devised plan using mathematical modelling is as follows:
 \textit{Sun} & Whole             & 81853            & 82193              & 0                  \\
              & Low Fat           & 20733            & 20733              & 0                 
 \end{tabular}
+
+As shown above, since there is no limit on production apart from the limit on supply from each farm, the optimal solution ensures that milk demand for each variety is met each day except for whole milk on a Sunday. It can be inferred from this result that demand is restricting profit and an increase in demand will enable increaseed sales and thus, a higher overall income. It should also be noted that only 15.6% of demand is for low fat milk which is restricting the volumne of low fat milk that can be produced. As this is the milk variety which achieves the higher return, profit can be increased if demand for low fat milk is increased. 
 
 ## Communication 5
 Your final communication with us introduced an important constraint on duration of milk storage and in resoponse to this, we once again updated our model. 
@@ -262,9 +262,8 @@ Using this new model, the optimised plan for your milk processing over the next 
              & Low Fat           & 20733            & 20733              & 0                 
 \end{tabular}
 
-The total weekly income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week. 
+The total weekly income you can expect using this plan is $277194.54. This income is based on 250647L of whole milk and 65267L of low fat milk being sold in total over the week.
 
-As shown above, with this plan, milk demands for each variety are met every day except Sunday, which should be a source of satisfaction for customers. However, there is opportunity for further income in the 9926L of whole milk demand that is not being met on a Sunday, and this should be considered when moving forward with the business. Additionally, since demand is almost completely met and is restricting further sales, it may be worthwhile to implement marketing strategies to potentially increase demand so that sales can increase. 
+As shown above, similarly to the plan for communication 4, milk demands for each variety are met every day except Sunday, which should be a source of satisfaction for customers. However, there is opportunity for further income in the 9926L of whole milk demand that is not being met on a Sunday, and this should be considered when moving forward with the business. Additionally, since demand is almost completely met and is restricting further sales, it may be worthwhile to implement marketing strategies to potentially increase demand so that sales can increase. In particular, an increase in demand for low fat milk would positively affect the optimal income. 
 
-In addition to creating this model and our general insights, we once again performed mathematical analysis on the solution to provide insight into potential opportunities for future growth. Our analysis shows that increasing the supply from each of the farms could increase the optimal income. For example, the daily supply from Fresh Pail is currently 9300L. For every litre of milk added to this supply, we predict an extra $0.90 can be earned on a Sunday, $0.85 on a Saturday, $0.10 on a Wednesday and $0.05 on either a Tuesday or Friday. However, it should be noted that this is not an unbounded constraint and after a certain volume of supply, this increase in profit is no longer guaranteed. The bound changes depending on the day and farm. 
-
+In addition to creating this model and our general insights, we once again performed mathematical analysis on the solution to provide insight into potential opportunities for future growth. Our analysis shows that increasing the supply from each of the farms could increase the optimal income. Specifically, for every litre of milk added to the daily supply, we predict an extra $0.90 can be earned on a Sunday, $0.85 on a Saturday, $0.10 on a Wednesday and $0.05 on either a Tuesday or Friday. However, it should be noted that this is not an unbounded constraint and after a certain volume of supply, this increase in profit is no longer guaranteed. The bound changes depending on the day and supplying farm. 

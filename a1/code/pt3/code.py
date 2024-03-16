@@ -57,7 +57,7 @@ for f in F:
 
 # the total fat content of processed milk is less than or equal to the fat content of the input
 C["Total fat"] = m.addConstr(gp.quicksum(F_w * (w[f] + y[f]) + F_l * (x[f] + z[f]) for f in F) <=
-                             gp.quicksum((w[f] + x[f] + y[f] + z[f]) * Fat[f] for f in F))
+                             gp.quicksum(Supply[f] * Fat[f] for f in F))
     
 # the fat content of organic products is less than or equal to the fat content of its input
 C["Organic fat"] = m.addConstr(gp.quicksum(F_w * w[f] + F_l * x[f] for f in F) <= 
@@ -68,8 +68,7 @@ m.addConstr((MaxLow / 100) * gp.quicksum(w[f] + x[f] for f in F) >= gp.quicksum(
 m.addConstr((MaxLow / 100) * gp.quicksum(y[f] + z[f] for f in F) >= gp.quicksum(z[f] for f in F))
     
 # organic products make up at most 15% of all processed milk
-C["Organic proportion"] =  m.addConstr(100 * gp.quicksum(w[f] + x[f] for f in F)/ sum(Supply[f] for f in F) <= 
-                                       MaxOrg)
+C["Organic proportion"] =  m.addConstr(100 * gp.quicksum(w[f] + x[f] for f in F)/ sum(Supply[f] for f in F) <= MaxOrg)
 
 # Solve it!
 m.optimize()
