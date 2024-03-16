@@ -75,14 +75,13 @@ model.setObjective(quicksum(wholesale_price[m] * X[m, d] for m in M for d in D) 
                    GRB.MAXIMIZE)
 
 ### Constraints
-
 for d in D:
     model.addConstr(W[0,d] == quicksum(Y[f,d] for f in F))
     model.addConstr(W[1,d] == quicksum(Z[f,d] for f in F))
 
 for d in D:
     for f in F:
-        model.addConstr(Y[f,d] + Z[f,d] == supply[f])
+        model.addConstr(Y[f,d] + Z[f,d] <= supply[f])
 
 # Demand for each day must not be exceeded
 for m in M:
@@ -99,7 +98,7 @@ for d in D:
 # Every day, the fat content of the product must be <= the fat content of the supply
 for d in D:
     model.addConstr(quicksum(W[m,d] * fat_product[m] for m in M) <=     # fat content of produced milk
-                    quicksum(supply[f] * fat[f] for f in F))            # fat content of supply milk
+                    quicksum((Y[f,d] + Z[f,d]) * fat[f] for f in F))            # fat content of supply milk
 
 # Storage
 for m in M:

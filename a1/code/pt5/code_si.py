@@ -87,6 +87,12 @@ for m in M:
     for d in D:
         model.addConstr(T[m,d] <= demand[m][d])
 
+model.addConstr(S[0,0] == 19975)
+model.addConstr(S[1,0] == 6896)
+
+model.addConstr(S[0,4] == 27519)
+model.addConstr(S[1,4] == 6794)
+
 for d in D:
     for m in M:
         if d > 0:
