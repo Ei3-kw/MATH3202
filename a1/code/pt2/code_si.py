@@ -18,8 +18,10 @@ F = range(len(farms))
 income = [1.10, 1.12, 1.30, 1.32]
 fat_product = [4, 1, 4, 1]
 
-supply = [5400, 7200, 7600, 5700, 7000]
-fat = [3.8, 3.6, 3.3, 3.3, 3.7]
+#supply = [5400, 7200, 7600, 5700, 7000]
+#fat = [3.8, 3.6, 3.3, 3.3, 3.7]
+supply = [9600, 5300, 9300, 9200, 7100]
+fat = [3.4, 3.6, 3.8, 3.6, 3.7]
 
 organic_product = ["Organic" in milk[m] for m in M]
 organic_farm = [False, False, False, True, True]
@@ -41,21 +43,30 @@ for f in F:
     if not organic_farm[f]:
         model.addConstr(quicksum(X[m, f] for m in M if organic_product[m]) == 0)
 
+""" milk produced must be less than supply """
 for f in F:
-    model.addConstr(quicksum(X[m, f] for m in M) <= supply[f])
+    model.addConstr(quicksum(X[m, f] for m in M) == supply[f])
 
 """ the sum of all produced milk must equal the sum of supply """
-model.addConstr(quicksum(X[m, f] for m in M for f in F) == quicksum(supply[f] for f in F))
+#model.addConstr(quicksum(X[m, f] for m in M for f in F) == quicksum(supply[f] for f in F))
 
 """ the percentage of fat in product must equal the percentage fat in supply """
-model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M for f in F)
-            == quicksum(supply[f]*(fat[f] / 100) for f in F))
+for f in F:
+    model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M) == supply[f] * (fat[f] / 100))
+    
+    if organic_farm[f]:
+        model.addConstr(quicksum(X[m,f] * (fat_product[m] / 100) for m in M if organic_product[m]) == quicksum(X[m,f] * (fat[f] / 100) for m in M if organic_product[m]))
 
 model.optimize()
 
 print("\n")
 print("-----------------------------------------------------------")
 print("INCOME:", round(model.objVal, 2), "\n")
+
+for m in M:
+    print(milk[m])
+    print(round(sum(X[m,f].x for f in F), 2), "\n")
+
 print("----- Breakdown by milk variety ---------------------------")
 for m in M:
     print(milk[m])

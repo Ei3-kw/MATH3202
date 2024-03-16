@@ -47,7 +47,7 @@ m.setObjective(gp.quicksum(W_w*a[t] + W_l*b[t] for t in T)
 for t in T:
     for f in F:
         m.addConstr(x[t,f] + y[t,f] <= Supply[f])
-    m.addConstr(gp.quicksum(F_w*x[t,f] + F_l*y[t,f] for f in F) <= sum(Supply[f] * Fat[f] for f in F))
+    m.addConstr(gp.quicksum(F_w*x[t,f] + F_l*y[t,f] for f in F) <= gp.quicksum((x[t,f] + y[t,f]) * Fat[f] for f in F))
     
     # storage
     if t == 0:

@@ -56,11 +56,13 @@ model.addConstr(quicksum(X[m, f] for m in M for f in F) == quicksum(supply[f] fo
 
 """ the percentage of fat in product is less than or equal to the percentage fat in supply """
 # organic
-model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M for f in F if organic_product[m]) 
-                <= quicksum(supply[f]*(fat[f] / 100) for f in F if organic_farm[f]))
-# total
-model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M for f in F)
-                <= quicksum(supply[f]*(fat[f] / 100) for f in F))
+for f in F:
+    if organic_farm[f]:
+        model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M if organic_product[m]) 
+                        <= quicksum(X[m,f] *(fat[f] / 100)) for m in M)
+    # total
+    model.addConstr(quicksum(X[m, f] * (fat_product[m] / 100) for m in M)
+                    <= quicksum(X[m,f] * (fat[f] / 100) for m in M)
 
 """ low fat can be at most 25% of total milk production (for organic and non-organic) """
 # organic
