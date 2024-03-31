@@ -42,8 +42,8 @@ Distance = [
 	[87,44,82]      # Highlands
 ]
 
-PMin = [20000,24000,32000]  # maximum daily capacity (litres)
-PMax = [45000,35000,36000]  # minimum daily processing (litres)
+PMin = [20000,24000,32000]  # minimum daily processing (litres)
+PMax = [45000,35000,36000]  # maximum daily processing capacity (litres)
 
 TEmpty  = 2     # travel cost with empty tanker ($/km)
 TFull   = 3     # travel cost with milk on board ($/km)
