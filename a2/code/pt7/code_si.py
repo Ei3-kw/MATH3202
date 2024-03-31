@@ -9,8 +9,11 @@ Farms = ['Cowbell', 'Creamy Acres', 'Milky Way', 'Happy Cows',
 
 Facilities = ['PF0', 'PF1', 'PF2']
 
+Tankers = ['Tanker 1', 'Tanker 2', 'Tanker 3', 'Tanker 4', 'Tanker 5']
+
 F = range(len(Farms))
 P = range(len(Facilities))
+T = range(len(Tankers))
 
 # Data
 Supply = [5200, 9900, 8800, 6900, 
@@ -45,55 +48,81 @@ Distance = [
 PMin = [20000,24000,32000]  # maximum daily capacity (litres)
 PMax = [45000,35000,36000]  # minimum daily processing (litres)
 
+Maintenance = [500, 470, 440, 410, 380]
+
 TEmpty  = 2     # travel cost with empty tanker ($/km)
 TFull   = 3     # travel cost with milk on board ($/km)
 TRound  = 5     # travel cost for a round trip ($/km)
+
+HMax = 10       # maximum number of hours a tanker can be used for 
+DMax = 600
 
 # Model
 m = Model('Comm 6')
 
 # Variables 
-""" boolean variables to tell us which of the processing plants the farms are assigned to """
-X = {(f, p): m.addVar(lb=0, vtype=GRB.BINARY, name=f"farm assignment") for f in F for p in P}
+W = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"whether a tanker in the fleet is operational") for p in P for t in T}
+X = {(p, f, t): m.addVar(vtype=GRB.BINARY, name=f"farm and tanker assignment per processing facility") for p in P for f in F for t in T}
+
 
 # Objective
 """ minimise the cost of travel to all of the farms """
-m.setObjective(quicksum(X[f, p] * Distance[f][p] * TRound for f in F for p in P), GRB.MINIMIZE)
+m.setObjective(quicksum(X[p,f,t] * Distance[f][p] * TRound for p in P for f in F for t in T) +     # cost for travel
+               quicksum(W[p,t] * Maintenance[t] for p in P for t in T), GRB.MINIMIZE)   # cost for maintenance
 
 # Constraints
 
-# processing facility daily limits
 for p in P:
     # maximum daily capacity is not exceeded for each processing facility
-    m.addConstr(quicksum(X[f,p] * Supply[f] for f in F) <= PMax[p])
+    m.addConstr(quicksum(X[p, f,t] * Supply[f] for f in F for t in T) <= PMax[p])
 
     # minimum processing requirement is met for each processing facility
-    m.addConstr(quicksum(X[f,p] * Supply[f] for f in F) >= PMin[p])
+    m.addConstr(quicksum(X[p, f,t] * Supply[f] for f in F for t in T) >= PMin[p])
+
+    for t in T:
+        # tankers are operational for at most 10 hours (we multiply by 2 to account for both directions of travel)
+        m.addConstr(quicksum(X[p,f,t] * Distance[f][p] for f in F) * 2 <= DMax)
+
+        # if a tanker is used, we set the binary variable to indicate this
+        for f in F:
+            m.addConstr((X[p,f,t] == 1) >> (W[p,t] == 1))
+
+        # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
+        if t > 0:
+            m.addConstr((W[p,t] == 1) >> (W[p,t-1] == 1))
 
 for f in F:
-    # each farm is assigned to one processing plant
-    m.addConstr(quicksum(X[f,p] for p in P) == 1)
+    # each farm is assigned to one processing plant and one tanker
+    m.addConstr(quicksum(X[p,f,t] for p in P for t in T) == 1)
 
 m.optimize()
 
-# Print Gurobi solver status
 if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
     exit()
 
-print(f"\n{'Totals'}\n{'-'*65}")
-print(f"{'Total cost of collections:': <20} ${int(m.objVal)}\n")
-for p in P:
-    print(f"{'Total collections for'} {Facilities[p]}: ${int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <20}")
-print("\n")
+print(f"\n{'-'*65}")
+print(f"{'Total cost of travel:': <20} ${int(m.objVal)}\n")
+
+print(f"{'-'*65}\n{'Facility': <13} {'Collection ($)': <18} {'Maintenance ($)': <18} {'Total ($)': <15}\n{'-'*65}")
 
 for p in P:
-    print(f"PROCESSING FACILITY {P[p]}")
-    print(f"{'-'*65}\n{'Farms': <18} {'Dist. (km)': <15} {'Cost ($)': <15} {'Supply (L)': <15}\n{'-'*65}")
+    print(f"{Facilities[p]: <13} {int(quicksum(X[p,f,t].x * Distance[f][p] * TRound for f in F for t in T).getValue()): <18}", end='')
+    print(f" {int(quicksum(W[p,t] * Maintenance[t] for t in T).getValue()): <18}", end='')
+    print(f" {int(quicksum(X[p,f,t].x * Distance[f][p] * TRound for f in F for t in T).getValue() + quicksum(W[p,t] * Maintenance[t] for t in T).getValue())}")
+
+print(f"{'-'*65}\n")
+
+
+for p in P:
+    print(f"PROCESSING FACILITY {p}")
+    print(f"{'-'*80}\n{'Farms': <18} {'Dist. (km)': <15} {'Cost ($)': <15} {'Supply (L)': <15} {'Tanker': <15}\n{'-'*80}")
     for f in F:
-        if X[f,p].x:
-            print(f"{Farms[f]: <18} {Distance[f][p]: <15} {Distance[f][p]*TRound: <15} {Supply[f]: <15}")
-    print(f"{'-'*65}")
+        for t in T:
+            if X[p,f,t].x:
+                print(f"{Farms[f]: <18} {Distance[f][p]: <15} {Distance[f][p] * TRound: <15} {Supply[f]: <15} {Tankers[t]: <15}")
+    print(f"{'-'*80}")
+    print(f"{' '*18} {int(quicksum(X[p,f,t].x * Distance[f][p] for f in F for t in T).getValue()): <15}", end='')
+    print(f" {int(quicksum(X[p,f,t].x * Distance[f][p] * TRound for f in F for t in T).getValue()): <15}", end='')
+    print(f" {int(quicksum(X[p,f,t].x * Supply[f] for f in F for t in T).getValue())} / {PMax[0]}\n")
 
-    print(f"{' '*18} {int(quicksum(X[f,p].x * Distance[f][p] for f in F).getValue()): <15}" , end='')
-    print(f" {int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <15} {int(quicksum(X[f,p].x * Supply[f] for f in F).getValue())} / {PMax[p]}\n")
