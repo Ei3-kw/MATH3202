@@ -12,6 +12,11 @@ Facilities = ['PF0', 'PF1', 'PF2']
 
 Tankers = ['Tanker 1', 'Tanker 2', 'Tanker 3', 'Tanker 4', 'Tanker 5']
 
+F = range(len(Farms))
+P = range(len(Facilities))
+T = range(len(Tankers))
+R = range(len(Milkruns))
+
 # DATA
 Supply = [5200, 9900, 8800, 6900, 
           9500, 5900, 3700, 4800, 
@@ -19,10 +24,6 @@ Supply = [5200, 9900, 8800, 6900,
           3200, 4800, 3100, 3400, 
           3000, 4500, 4500, 3900]
 
-F = range(len(Farms))
-P = range(len(Facilities))
-T = range(len(Tankers))
-R = range(len(Milkruns))
 
 PMin = [20000,24000,32000]  # maximum daily capacity (litres)
 PMax = [45000,35000,36000]  # minimum daily processing (litres)
@@ -86,7 +87,7 @@ if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
     exit()
 
-print(f"\n{'-'*52}")
+print(f"\n{'Totals'}\n{'-'*52}")
 print(f"{'Total cost of travel:': <20} ${int(m.objVal)}\n")
 
 print(f"{'-'*52}\n{'Facility': <10} {'Travel ($)': <12} {'Maintenance ($)': <17} {'Total ($)': <15}\n{'-'*52}")

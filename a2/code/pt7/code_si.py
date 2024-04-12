@@ -1,6 +1,6 @@
 from gurobipy import *
 
-# Sets
+# SETS
 Farms = ['Cowbell', 'Creamy Acres', 'Milky Way', 'Happy Cows', 
          'Udder Delight', 'Fresh Pail', 'Cowabunga', 'Utopia', 
          'Moo Meadows', 'Bluebell', 'Harmony', 'Velvet Valley', 
@@ -15,7 +15,7 @@ F = range(len(Farms))
 P = range(len(Facilities))
 T = range(len(Tankers))
 
-# Data
+# DATA
 Supply = [5200, 9900, 8800, 6900, 
           9500, 5900, 3700, 4800, 
           3200, 3400, 4400, 4500, 
@@ -48,39 +48,37 @@ Distance = [
 PMin = [20000,24000,32000]  # maximum daily capacity (litres)
 PMax = [45000,35000,36000]  # minimum daily processing (litres)
 
-Maintenance = [500, 470, 440, 410, 380]
+Maintenance = [500, 470, 440, 410, 380]     # cost of tanker maintenance ($/day)
 
 TEmpty  = 2     # travel cost with empty tanker ($/km)
 TFull   = 3     # travel cost with milk on board ($/km)
 TRound  = 5     # travel cost for a round trip ($/km)
 
 HMax = 10       # maximum number of hours a tanker can be used for 
-DMax = 600
+DMax = 600      # maximum number of kilometers a tanker can be used for (assuming average speed of 60km/h)
 
-# Model
-m = Model('Comm 6')
+# MODEL
+m = Model('Comm 7')
 
-# Variables 
-W = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"whether a tanker in the fleet is operational") for p in P for t in T}
-X = {(p, f, t): m.addVar(vtype=GRB.BINARY, name=f"farm and tanker assignment per processing facility") for p in P for f in F for t in T}
+# VARIABLES
+W = {(p,t): m.addVar(vtype=GRB.BINARY, name=f"whether a tanker in the fleet is operational") for p in P for t in T}
+X = {(p,f,t): m.addVar(vtype=GRB.BINARY, name=f"farm and tanker assignment per processing facility") for p in P for f in F for t in T}
 
-
-# Objective
+# OBJECTIVE
 """ minimise the cost of travel to all of the farms """
 m.setObjective(quicksum(X[p,f,t] * Distance[f][p] * TRound for p in P for f in F for t in T) +     # cost for travel
                quicksum(W[p,t] * Maintenance[t] for p in P for t in T), GRB.MINIMIZE)   # cost for maintenance
 
-# Constraints
-
+# CONSTRAINTS
 for p in P:
     # maximum daily capacity is not exceeded for each processing facility
-    m.addConstr(quicksum(X[p, f,t] * Supply[f] for f in F for t in T) <= PMax[p])
+    m.addConstr(quicksum(X[p,f,t] * Supply[f] for f in F for t in T) <= PMax[p])
 
     # minimum processing requirement is met for each processing facility
-    m.addConstr(quicksum(X[p, f,t] * Supply[f] for f in F for t in T) >= PMin[p])
+    m.addConstr(quicksum(X[p,f,t] * Supply[f] for f in F for t in T) >= PMin[p])
 
     for t in T:
-        # tankers are operational for at most 10 hours (we multiply by 2 to account for both directions of travel)
+        # tankers are operational for at most 10 hours (or 600 km) (we multiply by 2 to account for both directions of travel)
         m.addConstr(quicksum(X[p,f,t] * Distance[f][p] for f in F) * 2 <= DMax)
 
         # if a tanker is used, we set the binary variable to indicate this
@@ -97,11 +95,12 @@ for f in F:
 
 m.optimize()
 
+# Print gurobi solver status
 if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
     exit()
 
-print(f"\n{'-'*65}")
+print(f"\n{'Totals'}\n{'-'*65}")
 print(f"{'Total cost of travel:': <20} ${int(m.objVal)}\n")
 
 print(f"{'-'*65}\n{'Facility': <13} {'Collection ($)': <18} {'Maintenance ($)': <18} {'Total ($)': <15}\n{'-'*65}")

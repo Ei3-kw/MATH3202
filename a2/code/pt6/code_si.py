@@ -1,6 +1,6 @@
 from gurobipy import *
 
-# Sets
+# SETS
 Farms = ['Cowbell', 'Creamy Acres', 'Milky Way', 'Happy Cows', 
          'Udder Delight', 'Fresh Pail', 'Cowabunga', 'Utopia', 
          'Moo Meadows', 'Bluebell', 'Harmony', 'Velvet Valley', 
@@ -12,7 +12,7 @@ Facilities = ['PF0', 'PF1', 'PF2']
 F = range(len(Farms))
 P = range(len(Facilities))
 
-# Data
+# DATA
 Supply = [5200, 9900, 8800, 6900, 
           9500, 5900, 3700, 4800, 
           3200, 3400, 4400, 4500, 
@@ -49,18 +49,18 @@ TEmpty  = 2     # travel cost with empty tanker ($/km)
 TFull   = 3     # travel cost with milk on board ($/km)
 TRound  = 5     # travel cost for a round trip ($/km)
 
-# Model
+# MODEL
 m = Model('Comm 6')
 
-# Variables 
+# VARIABLES
 """ boolean variables to tell us which of the processing plants the farms are assigned to """
 X = {(f, p): m.addVar(lb=0, vtype=GRB.BINARY, name=f"farm assignment") for f in F for p in P}
 
-# Objective
+# OBJECTIVE
 """ minimise the cost of travel to all of the farms """
 m.setObjective(quicksum(X[f, p] * Distance[f][p] * TRound for f in F for p in P), GRB.MINIMIZE)
 
-# Constraints
+# CONSTRAINTS
 
 # processing facility daily limits
 for p in P:
@@ -71,7 +71,7 @@ for p in P:
     m.addConstr(quicksum(X[f,p] * Supply[f] for f in F) >= PMin[p])
 
 for f in F:
-    # each farm is assigned to one processing plant
+    # each farm must only be assigned to one processing plant
     m.addConstr(quicksum(X[f,p] for p in P) == 1)
 
 m.optimize()
@@ -82,9 +82,9 @@ if m.status == GRB.INFEASIBLE:
     exit()
 
 print(f"\n{'Totals'}\n{'-'*65}")
-print(f"{'Total cost of collections:': <20} ${int(m.objVal)}\n")
+print(f"{'Total cost of travel:': <20} ${int(m.objVal)}\n")
 for p in P:
-    print(f"{'Total collections for'} {Facilities[p]}: ${int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <20}")
+    print(f"{'Total travel for'} {Facilities[p]}: ${int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <20}")
 print("\n")
 
 for p in P:
