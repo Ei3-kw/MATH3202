@@ -81,10 +81,10 @@ if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
     exit()
 
-print(f"\n{'Totals'}\n{'-'*65}")
-print(f"{'Total cost of travel:': <20} ${int(m.objVal)}\n")
+print(f"\n{'TOTALS'}\n{'-'*65}")
+print(f"{'Total cost of collections:': <20} ${int(m.objVal)}\n")
 for p in P:
-    print(f"{'Total travel for'} {Facilities[p]}: ${int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <20}")
+    print(f"{'Total collections for'} {Facilities[p]}: ${int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <20}")
 print("\n")
 
 for p in P:

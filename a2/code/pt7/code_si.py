@@ -48,7 +48,7 @@ Distance = [
 PMin = [20000,24000,32000]  # maximum daily capacity (litres)
 PMax = [45000,35000,36000]  # minimum daily processing (litres)
 
-Maintenance = [500, 470, 440, 410, 380]     # cost of tanker maintenance ($/day)
+Maintenance = [500, 470, 440, 410, 380]     # cost of tanker maintenance for each tanker t in T ($/day)
 
 TEmpty  = 2     # travel cost with empty tanker ($/km)
 TFull   = 3     # travel cost with milk on board ($/km)
@@ -61,13 +61,13 @@ DMax = 600      # maximum number of kilometers a tanker can be used for (assumin
 m = Model('Comm 7')
 
 # VARIABLES
-W = {(p,t): m.addVar(vtype=GRB.BINARY, name=f"whether a tanker in the fleet is operational") for p in P for t in T}
+W = {(p,t): m.addVar(vtype=GRB.BINARY, name=f"binary variable for whether a tanker in the fleet is operational") for p in P for t in T}
 X = {(p,f,t): m.addVar(vtype=GRB.BINARY, name=f"farm and tanker assignment per processing facility") for p in P for f in F for t in T}
 
 # OBJECTIVE
-""" minimise the cost of travel to all of the farms """
-m.setObjective(quicksum(X[p,f,t] * Distance[f][p] * TRound for p in P for f in F for t in T) +     # cost for travel
-               quicksum(W[p,t] * Maintenance[t] for p in P for t in T), GRB.MINIMIZE)   # cost for maintenance
+""" minimise the total cost of collections """
+m.setObjective(quicksum(X[p,f,t] * Distance[f][p] * TRound for p in P for f in F for t in T) +  # cost for travel
+               quicksum(W[p,t] * Maintenance[t] for p in P for t in T), GRB.MINIMIZE)           # cost for maintenance
 
 # CONSTRAINTS
 for p in P:
@@ -81,12 +81,12 @@ for p in P:
         # tankers are operational for at most 10 hours (or 600 km) (we multiply by 2 to account for both directions of travel)
         m.addConstr(quicksum(X[p,f,t] * Distance[f][p] for f in F) * 2 <= DMax)
 
-        # if a tanker is used, we set the binary variable to indicate this
         for f in F:
+            # if a tanker is used, set the binary variable to indicate this
             m.addConstr((X[p,f,t] == 1) >> (W[p,t] == 1))
 
-        # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
         if t > 0:
+            # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
             m.addConstr((W[p,t] == 1) >> (W[p,t-1] == 1))
 
 for f in F:
@@ -100,10 +100,10 @@ if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
     exit()
 
-print(f"\n{'Totals'}\n{'-'*65}")
-print(f"{'Total cost of travel:': <20} ${int(m.objVal)}\n")
+print(f"\n{'TOTALS'}\n{'-'*65}")
+print(f"{'Total cost of collections:': <20} ${int(m.objVal)}\n")
 
-print(f"{'-'*65}\n{'Facility': <13} {'Collection ($)': <18} {'Maintenance ($)': <18} {'Total ($)': <15}\n{'-'*65}")
+print(f"{'-'*65}\n{'Facility': <13} {'Travel ($)': <18} {'Maintenance ($)': <18} {'Total ($)': <15}\n{'-'*65}")
 
 for p in P:
     print(f"{Facilities[p]: <13} {int(quicksum(X[p,f,t].x * Distance[f][p] * TRound for f in F for t in T).getValue()): <18}", end='')
@@ -124,4 +124,3 @@ for p in P:
     print(f"{' '*18} {int(quicksum(X[p,f,t].x * Distance[f][p] for f in F for t in T).getValue()): <15}", end='')
     print(f" {int(quicksum(X[p,f,t].x * Distance[f][p] * TRound for f in F for t in T).getValue()): <15}", end='')
     print(f" {int(quicksum(X[p,f,t].x * Supply[f] for f in F for t in T).getValue())} / {PMax[0]}\n")
-
