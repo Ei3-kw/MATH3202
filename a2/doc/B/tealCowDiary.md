@@ -276,3 +276,70 @@ Broken down by processing facility, the cost of collections is as follows:
 \end{tabular}
 
 This revised model takes into account all of the previously provided constraints while substituting distance data for the information included in the milk runs data. As less distance needs to be travelled, only a single tanker from each processing facility needs to be utilised which reduces the cost of maintenance. A map of the runs that should be taken from each processing facility is given below: 
+
+\begin{tikzpicture}
+\tikzstyle{every node}=[font=\tiny]
+
+\begin{axis}[
+    scale = 1.5,
+    grid = major,
+    xmin=-6, xmax=105,
+    ymin=5, ymax=105,
+    xtick={0,5,...,105},
+    ytick={0,5,...,105},
+    xticklabel=\empty,
+    yticklabel=\empty,
+    legend pos=outer north east
+    ]
+
+\addplot[color=teal,mark=\empty] coordinates {(93, 14) (25, 11)};
+\addplot[color=pink,mark=\empty] coordinates {(54, 84) (36, 41) (34, 56) (53, 84)};
+\addplot[color=cyan,mark=\empty] coordinates {(13, 88) (10, 32)};
+
+\addplot[scatter, mark=*, only marks, point meta=explicit symbolic, nodes near coords,] table[x=x, y=y, meta=label] {
+x   y   label
+2   18  {Cowbell}
+25  11  {Creamy Acres}
+10  32  {Milky Way}
+2   34  {Happy Cows}
+36  16  {Udder Delight}
+7   48  {Fresh Pail}
+36  41  {Cowabunga}
+22  50  {Utopia}
+55  23  {Moo Meadows}
+61  17  {Bluebell}
+55  34  {Harmony}
+34  56  {Velvet Valley}
+16  69  {Moonybrook}
+80  30  {Cloven Hills}
+71  56  {Midnight Moo}
+67  63  {Willows Bend}
+81  48  {Moosa Heads}
+91  56  {Dreamy Dairies}
+73  98  {Happy Hooves}
+89  98  {Highlands}
+};
+
+\addplot[color=teal,mark=\empty] coordinates {(93, 14) (36, 16)};
+\addplot[color=teal,mark=\empty] coordinates {(93, 14) (61, 17) (55, 23) (93, 14)};
+\addplot[color=teal,mark=\empty] coordinates {(93, 14) (80, 30) (81, 48) (93, 14)};
+
+\addplot[color=pink,mark=\empty] coordinates {(54, 84) (91, 56) (71, 56) (53, 84)};
+\addplot[color=pink,mark=\empty] coordinates {(54, 84) (55, 34) (67, 63) (53, 84)};
+\addplot[color=pink,mark=\empty] coordinates {(54, 84) (73, 98) (89, 98) (53, 84)};
+
+\addplot[color=cyan,mark=\empty] coordinates {(13, 88) (2, 34)};
+\addplot[color=cyan,mark=\empty] coordinates {(13, 88) (2, 18) (22, 50) (13, 88)};
+\addplot[color=cyan,mark=\empty] coordinates {(13, 88) (7, 48) (16, 69) (13, 88)};
+
+\addplot[scatter, mark=*, only marks, mark = o, point meta=explicit symbolic, nodes near coords,] table[x=x, y=y, meta=label] {
+x   y   label
+93  14  PF0
+54  84  PF1
+13  88  PF2
+};
+
+\legend{PF0 - Tanker 1, PF1 - Tanker 1, PF2 - Tanker 1}
+
+\end{axis}
+\end{tikzpicture}
