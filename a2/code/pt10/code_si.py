@@ -61,9 +61,8 @@ B = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"binary variable for whether a tan
 
 # OBJECTIVE
 """ select tanker routes which minimise the cost of collections """
-m.setObjective(quicksum(X[p,r,t] * Milkruns[r][COST] for p in P for r in R for t in T) +    # cost for travel
-               quicksum(B[p,t] * DeepClean for p in P for t in T) +                         # cost of deep cleans
-               quicksum(W[p,t] * Maintenance[t] for p in P for t in T), GRB.MINIMIZE)       # cost for maintenance
+m.setObjective(quicksum(X[p,r,t] * Milkruns[r][COST] for p in P for r in R for t in T) +                    # cost for travel
+               quicksum(W[p,t] * Maintenance[t] + B[p,t] * DeepClean for p in P for t in T), GRB.MINIMIZE)  # cost for maintenance and cleaning
 
 # CONSTRAINTS
 for p in P:
