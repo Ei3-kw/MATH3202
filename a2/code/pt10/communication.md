@@ -8,7 +8,7 @@ geometry: margin=2cm
 - $P:$ Facilities
 - $T:$ Tankers
 - $R:$ Milkruns
-- $O:$ Milktypes
+- $K:$ Milktypes
 
 ### Data
 - $Supply_{f}$ - milk supply from each farm $f \in F$ (L)
@@ -26,12 +26,17 @@ geometry: margin=2cm
 - $DClean$ - cost of deep clean between organic and non-organic milk runs ($)
 
 ### Variables
-- $W_{pt}$ - binary assignment of tankers $t \in T$ to processing facilities $p \in P$
-- $X_{prt}$ - binary assignment of routes $r \in R$ to processing facilities $p \in P$ and tankers $t \in T$
-- $Y_{prt}$ - number of extra minutes taken by a tanker $t \in T$ from facility $p \in P$ between farms on a milk run $r \in R$
-- $Z_{pt}$ - number of routes each tanker $t \in T$ from processing facility $p \in P$ is assigned to 
-- $A_{pto}$ - binary variable to indicate whether a milk run used by a tanker $t \in T$ from processing facility $p \in P$ is organic or non organic
+- $A_{ptk} = \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ has a milkrun for milktype } k \in K \\ 0 &\quad \textrm{otherwise} \end{cases}$
 
+- $B_{pt} = \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ has both organic and non organic runs} \\ 0 &\quad \textrm{otherwise} \end{cases}$
+
+- $W_{pt} = \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ is used for milk runs} \\ 0 &\quad \textrm{otherwise} \end{cases}$
+
+- $X_{prt} = \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ performs milk run } r \in R \\ 0 &\quad \textrm{otherwise} \end{cases}$
+
+- $Y_{prt}$ - number of extra minutes taken by a tanker $t \in T$ from facility $p \in P$ between farms on a milk run $r \in R$
+
+- $Z_{pt}$ - number of routes each tanker $t \in T$ from processing facility $p \in P$ is assigned to 
 
 ### Objective function
 $$\textrm{min} \Big(\sum_{p \in P} \, \sum_{r \in R} \, \sum_{t \in T} \big( X_{prt} \times C_{r} \big) + \sum_{p \in P} \, \sum_{t \in T} \big( W_{pt} \times Maintenance_{t} + O_{pt} \times DClean\big) \Big)$$
@@ -49,17 +54,17 @@ $$\Bigg( \sum_{r \in R} X_{prt} \times RunT_{r} + Y_{prt} \Bigg) + \Big( Z_{pt} 
 - The number of routes a tanker is assigned to equals the sum of route assignments to that tanker and processing facility. 
 $$Z_{pt} = \sum_{r \in R} X_{prt}, \quad \forall p \in P, \; t \in T$$
 
-- Set variables to indicate the milk type on each run performed by a tanker.
-$$X_{prt} = 1 \implies A_{pto} = 1, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ such that } RunO_{r} = o$$
+- Set binary variables to indicate the milk type on each run performed by a tanker.
+$$X_{prt} = 1 \implies A_{ptk} = 1, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ such that } RunO_{r} = k$$
 
 - If a tanker is not used, variables indicating whether the run is organic must not be set. 
-$$W_{pt} == 0 \implies A_{pto} == 0, \quad \forall p \in P, \; t \in T, \; o \in O$$
+$$W_{pt} = 0 \implies A_{ptk} = 0, \quad \forall p \in P, \; t \in T, \; k \in K$$
 
 - If a tanker $t \in T$ from facility $p \in P$ has both organic and non-organic milk runs, set the binary variable to indicate this.
 $$
 B_{pt} = \begin{cases} 
-1, &\quad \textrm{ if } \sum_{o \in O} A_{pto} = 2 \\
-0, &\quad \textrm{ if } \sum_{o \in O} A_{pto} <= 1
+1, &\quad \textrm{ if } \sum_{k \in K} A_{ptk} = 2 \\
+0, &\quad \textrm{ if } \sum_{k \in K} A_{ptk} < 2
 \end{cases}
 $$
 
