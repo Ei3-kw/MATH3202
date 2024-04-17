@@ -54,7 +54,6 @@ TEmpty  = 2     # travel cost with empty tanker ($/km)
 TFull   = 3     # travel cost with milk on board ($/km)
 TRound  = 5     # travel cost for a round trip ($/km)
 
-HMax = 10       # maximum number of hours a tanker can be used for 
 DMax = 600      # maximum number of kilometers a tanker can be used for (assuming average speed of 60km/h)
 
 # MODEL
@@ -83,11 +82,11 @@ for p in P:
 
         for f in F:
             # if a tanker is used, set the binary variable to indicate this
-            m.addConstr((X[p,f,t] == 1) >> (W[p,t] == 1))
+            m.addConstr(W[p,t] >= X[p,f,t])
 
         if t > 0:
             # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
-            m.addConstr((W[p,t] == 1) >> (W[p,t-1] == 1))
+            m.addConstr(W[p,t] <= W[p,t-1])
 
 for f in F:
     # each farm is assigned to one processing plant and one tanker

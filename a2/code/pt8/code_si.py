@@ -69,11 +69,11 @@ for p in P:
                 m.addConstr(X[p,r,t] == 0)
 
             # if a tanker is used, set the binary variable to indicate this
-            m.addConstr((X[p,r,t] == 1) >> (W[p,t] == 1))
+            m.addConstr(W[p,t] >= X[p,r,t])
 
         if t > 0:
             # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
-            m.addConstr((W[p,t] == 1) >> (W[p,t-1] == 1))
+            m.addConstr(W[p,t] <= W[p,t-1])
 
 for f in F:
     # every farm needs to be visited on one of the assigned routes 
