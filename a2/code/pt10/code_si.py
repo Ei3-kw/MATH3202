@@ -18,7 +18,7 @@ F = range(len(Farms))
 P = range(len(Facilities))
 T = range(len(Tankers))
 R = range(len(Milkruns))
-O = range(len(Milkruns))
+K = range(len(MilkTypes))
 
 # DATA
 Supply = [5200, 9900, 8800, 6900, 
@@ -32,7 +32,6 @@ PMax = [45000,35000,36000]  # minimum daily processing (litres)
 
 Maintenance = [500, 470, 440, 410, 380]     # cost of tanker maintenance for each tanker t in T ($/day)
 
-HMax = 10       # maximum number of hours a tanker can be used for (h)
 MMax = 600      # maximum number of minutes a tanker can be used for (min)
 
 BetweenFarms    = 15    # delay between farms on a milk run (min)
@@ -56,7 +55,7 @@ X = {(p, r, t): m.addVar(vtype=GRB.BINARY, name=f"route and tanker assignment pe
 Y = {(p, r, t): m.addVar(vtype=GRB.INTEGER, name=f"total extra minutes between farms on a milk run") for p in P for r in R for t in T}
 Z = {(p, t): m.addVar(vtype=GRB.INTEGER, name=f"number of routes each tanker is assigned to") for p in P for t in T}
 
-A = {(p, t, o): m.addVar(vtype=GRB.BINARY, name=f"binary variables to indicate whether a tanker is assigned organic or non-organic milk runs") for p in P for t in T for o in O}
+A = {(p, t, k): m.addVar(vtype=GRB.BINARY, name=f"binary variables to indicate whether a tanker is assigned organic or non-organic milk runs") for p in P for t in T for k in K}
 B = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"binary variable for whether a tanker does both organic and non-organic milk runs") for p in P for t in T}
 
 # OBJECTIVE
@@ -80,7 +79,7 @@ for p in P:
         m.addConstr(Z[p,t] == quicksum(X[p,r,t] for r in R))
         
         # if a tanker has both organic and non-organic milk runs, set the binary variable to indicate this
-        m.addConstr(B[p,t] == (quicksum(A[p,t,o] for o in O) - W[p,t]))
+        m.addConstr(B[p,t] == (quicksum(A[p,t,k] for k in K) - W[p,t]))
 
         for r in R: 
             if Milkruns[r][ORGANIC]:
@@ -121,7 +120,6 @@ for p in P:
     for t in T:
         print(f"PF{p}, {Tankers[t]}: {A[p,t,0].x} {A[p,t,1].x} {B[p,t].x}")
         print(f"{W[p,t].x}")
-        print(f"{int(quicksum(A[p,t,o].x for o in O).getValue()) - W[p,t].x}")
 
 if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  

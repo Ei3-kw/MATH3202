@@ -30,7 +30,6 @@ PMax = [45000,35000,36000]  # minimum daily processing (litres)
 
 Maintenance = [500, 470, 440, 410, 380]     # cost of tanker maintenance for each tanker t in T ($/day)
 
-HMax = 10       # maximum number of hours a tanker can be used for (h)
 MMax = 600      # maximum number of minutes a tanker can be used for (min)
 
 BetweenFarms    = 15    # delay between farms on a milk run (min)
@@ -77,7 +76,7 @@ for p in P:
                 m.addConstr(X[p,r,t] == 0)
 
             # if a tanker is used, set the binary variable to indicate this
-            m.addConstr((X[p,r,t] == 1) >> (W[p,t] == 1))
+            m.addConstr(W[p,t] >= X[p,r,t])
 
             if len(Milkruns[r][FARMS]) > 0:
                 # for each milk run that visits multiple farms and is assigned to some tanker, record the required number of minutes for breaks 
@@ -89,7 +88,7 @@ for p in P:
 
         # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
         if t > 0:
-            m.addConstr((W[p,t] == 1) >> (W[p,t-1] == 1))
+            m.addConstr(W[p,t] <= W[p,t-1])
 
 for f in F:
     # every farm needs to be visited on one of the routes 
