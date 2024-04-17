@@ -79,49 +79,47 @@ for p in P:
         # number of routes a tanker is assigned to equals the sum of route assignments to that tanker and processing facility
         m.addConstr(Z[p,t] == quicksum(X[p,r,t] for r in R))
         
-        # if a tanker has both organic and non-organic milk runs, set the binary variable to indicate this
-        m.addConstr(B[p,t] == (quicksum(A[p,t,o] for o in O) - W[p,t]))
+        # if a tanker has both organic and non-organic milk runs, set the binary variable to indicate this, 
+        # otherwise the binary variable is set to zero
+        m.addConstr((B[p,t] == 1) >> (quicksum(A[p,t,o] for o in O) == 2))
+        m.addConstr((B[p,t] == 0) >> (quicksum(A[p,t,o] for o in O) <= 1))
+
+        # binary variables indicating whether a tanker has an organic / non-organic run are only set if the tanker is used 
+        for o in O:
+            m.addConstr((W[p,t] == 0) >> (A[p,t,o] == 0))
 
         for r in R: 
             if Milkruns[r][ORGANIC]:
-                # if a run is used and is organic, set the binary variable to indicate this
-                m.addConstr(A[p,t,0] >= X[p,r,t])
-
+                # if a run is used and is organic, set this binary variable
+                m.addConstr((X[p,r,t] == 1) >> (A[p,t,0] == 1))
             else:
-                # if a run is used and is non organic, set the binary variable to indicate this
-                m.addConstr(A[p,t,1] >= X[p,r,t])
+                # if a run is used and is non organic, set this binary variable
+                m.addConstr((X[p,r,t] == 1) >> (A[p,t,1] == 1))
 
             # for processing facility p, if the Milkrun does not originate from p the tanker cannot be assigned to this route
             if Milkruns[r][PF] != p:
                 m.addConstr(X[p,r,t] == 0)
 
             # if a tanker is used, set the binary variable to indicate this
-            m.addConstr(W[p,t] >= X[p,r,t])
+            m.addConstr((X[p,r,t] == 1) >> (W[p,t] == 1))
 
             if len(Milkruns[r][FARMS]) > 0:
-                # for each used milk run that visits multiple farms, record the required number of minutes for breaks 
+                # for each milk run that visits multiple farms and is assigned to some tanker, record the required number of minutes for breaks 
                 m.addConstr(Y[p,r,t] == X[p,r,t] * (len(Milkruns[r][FARMS]) - 1) * BetweenFarms)
 
             else:
                 # if there is only one farm on the route, there is no need for breaks 
                 m.addConstr(Y[p,r,t] == 0)
 
-
         # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
         if t > 0:
-            m.addConstr(W[p,t] <= W[p,t-1])
+            m.addConstr((W[p,t] == 1) >> (W[p,t-1] == 1))
 
 for f in F:
     # every farm needs to be visited on one of the routes 
     m.addConstr(quicksum(X[p,r,t] for p in P for r in R for t in T if f in Milkruns[r][FARMS]) == 1)
 
 m.optimize()
-
-for p in P:
-    for t in T:
-        print(f"PF{p}, {Tankers[t]}: {A[p,t,0].x} {A[p,t,1].x} {B[p,t].x}")
-        print(f"{W[p,t].x}")
-        print(f"{int(quicksum(A[p,t,o].x for o in O).getValue()) - W[p,t].x}")
 
 if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
