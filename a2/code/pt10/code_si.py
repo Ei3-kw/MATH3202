@@ -2,11 +2,10 @@ from gurobipy import *
 from Milkruns2 import *
 
 # SETS
-Farms = ['Cowbell', 'Creamy Acres', 'Milky Way', 'Happy Cows', 
-         'Udder Delight', 'Fresh Pail', 'Cowabunga', 'Utopia', 
-         'Moo Meadows', 'Bluebell', 'Harmony', 'Velvet Valley', 
-         'Moonybrook', 'Cloven Hills', 'Midnight Moo', 'Willows Bend', 
-         'Moosa Heads', 'Dreamy Dairies', 'Happy Hooves', 'Highlands']
+Farms = ['Cowbell', 'Creamy Acres', 'Milky Way', 'Happy Cows', 'Udder Delight', 
+         'Fresh Pail', 'Cowabunga', 'Utopia', 'Moo Meadows', 'Bluebell', 
+         'Harmony', 'Velvet Valley', 'Moonybrook', 'Cloven Hills', 'Midnight Moo', 
+         'Willows Bend', 'Moosa Heads', 'Dreamy Dairies', 'Happy Hooves', 'Highlands']
 
 Facilities = ['PF0', 'PF1', 'PF2']
 
@@ -21,23 +20,18 @@ R = range(len(Milkruns))
 K = range(len(MilkTypes))
 
 # DATA
-Supply = [5200, 9900, 8800, 6900, 
-          9500, 5900, 3700, 4800, 
-          3200, 3400, 4400, 4500, 
-          3200, 4800, 3100, 3400, 
-          3000, 4500, 4500, 3900]
+Supply = [5200, 9900, 8800, 6900, 9500, 5900, 3700, 4800, 3200, 3400, 
+          4400, 4500, 3200, 4800, 3100, 3400, 3000, 4500, 4500, 3900]
 
 PMin = [20000,24000,32000]  # maximum daily capacity (litres)
 PMax = [45000,35000,36000]  # minimum daily processing (litres)
 
-Maintenance = [500, 470, 440, 410, 380]     # cost of tanker maintenance for each tanker t in T ($/day)
+Maintenance = [500, 470, 440, 410, 380]  # cost of tanker maintenance for each tanker t in T ($/day)
 
-MMax = 600      # maximum number of minutes a tanker can be used for (min)
-
-BetweenFarms    = 15    # delay between farms on a milk run (min)
-BetweenRuns     = 60    # cleaning time between milk runs (min)
-
-DeepClean = 100 # cost of performing a deep clean between organic and non-organic runs
+MMax         = 600  # maximum number of minutes a tanker can be used for (min)
+DeepClean    = 100  # cost of performing a deep clean between organic and non-organic runs ($)
+BetweenFarms = 15   # delay between farms on a milk run (min)
+BetweenRuns  = 60   # cleaning time between milk runs (min)
 
 # constants for indexing the Milkruns array 
 PF      = 0
@@ -50,18 +44,17 @@ ORGANIC = 4
 m = Model('Comm 10')
 
 # VARIABLES
-W = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"whether a tanker in the fleet is operational") for p in P for t in T}
+U = {(p, t, k): m.addVar(vtype=GRB.BINARY, name=f"indicates whether a tanker is assigned organic or non-organic milk runs") for p in P for t in T for k in K}
+V = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"indicates whether a tanker does both organic and non-organic milk runs") for p in P for t in T}
+W = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"indicates whether a tanker in the fleet is operational") for p in P for t in T}
 X = {(p, r, t): m.addVar(vtype=GRB.BINARY, name=f"route and tanker assignment per processing facility") for p in P for r in R for t in T}
-Y = {(p, r, t): m.addVar(vtype=GRB.INTEGER, name=f"total extra minutes between farms on a milk run") for p in P for r in R for t in T}
-Z = {(p, t): m.addVar(vtype=GRB.INTEGER, name=f"number of routes each tanker is assigned to") for p in P for t in T}
-
-A = {(p, t, k): m.addVar(vtype=GRB.BINARY, name=f"binary variables to indicate whether a tanker is assigned organic or non-organic milk runs") for p in P for t in T for k in K}
-B = {(p, t): m.addVar(vtype=GRB.BINARY, name=f"binary variable for whether a tanker does both organic and non-organic milk runs") for p in P for t in T}
+Y = {(p, r, t): m.addVar(lb=0, vtype=GRB.INTEGER, name=f"total extra minutes between farms on a milk run") for p in P for r in R for t in T}
+Z = {(p, t): m.addVar(lb=0, vtype=GRB.INTEGER, name=f"number of routes each tanker is assigned to") for p in P for t in T}
 
 # OBJECTIVE
 """ select tanker routes which minimise the cost of collections """
 m.setObjective(quicksum(X[p,r,t] * Milkruns[r][COST] for p in P for r in R for t in T) +                    # cost for travel
-               quicksum(W[p,t] * Maintenance[t] + B[p,t] * DeepClean for p in P for t in T), GRB.MINIMIZE)  # cost for maintenance and cleaning
+               quicksum(W[p,t] * Maintenance[t] + V[p,t] * DeepClean for p in P for t in T), GRB.MINIMIZE)  # cost for maintenance and cleaning
 
 # CONSTRAINTS
 for p in P:
@@ -79,16 +72,17 @@ for p in P:
         m.addConstr(Z[p,t] == quicksum(X[p,r,t] for r in R))
         
         # if a tanker has both organic and non-organic milk runs, set the binary variable to indicate this
-        m.addConstr(B[p,t] == (quicksum(A[p,t,k] for k in K) - W[p,t]))
+        m.addConstr(V[p,t] == (quicksum(U[p,t,k] for k in K) - W[p,t]))
 
-        for r in R: 
-            if Milkruns[r][ORGANIC]:
+        for r in R:
+            for k in K:
+            #if Milkruns[r][ORGANIC]:
                 # if a run is used and is organic, set the binary variable to indicate this
-                m.addConstr(A[p,t,0] >= X[p,r,t])
+                m.addConstr(U[p,t,k] >= X[p,r,t] if Milkruns[r][ORGANIC] == k)
 
-            else:
+            #else:
                 # if a run is used and is non organic, set the binary variable to indicate this
-                m.addConstr(A[p,t,1] >= X[p,r,t])
+                #m.addConstr(U[p,t,1] >= X[p,r,t])
 
             # for processing facility p, if the Milkrun does not originate from p the tanker cannot be assigned to this route
             if Milkruns[r][PF] != p:
@@ -118,7 +112,7 @@ m.optimize()
 
 for p in P:
     for t in T:
-        print(f"PF{p}, {Tankers[t]}: {A[p,t,0].x} {A[p,t,1].x} {B[p,t].x}")
+        print(f"PF{p}, {Tankers[t]}: {U[p,t,0].x} {U[p,t,1].x} {V[p,t].x}")
         print(f"{W[p,t].x}")
 
 if m.status == GRB.INFEASIBLE:
