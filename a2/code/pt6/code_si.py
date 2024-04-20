@@ -92,8 +92,8 @@ for p in P:
     print(f"{'-'*65}\n{'Farms': <18} {'Dist. (km)': <15} {'Cost ($)': <15} {'Supply (L)': <15}\n{'-'*65}")
     for f in F:
         if X[f,p].x:
-            print(f"{Farms[f]: <18} {Distance[f][p]: <15} {Distance[f][p]*TRound: <15} {Supply[f]: <15}")
+            print(f"{Farms[f]: <18} {Distance[f][p] * 2: <15} {Distance[f][p]*TRound: <15} {Supply[f]: <15}")
     print(f"{'-'*65}")
 
-    print(f"{' '*18} {int(quicksum(X[f,p].x * Distance[f][p] for f in F).getValue()): <15}" , end='')
+    print(f"{' '*18} {int(quicksum(X[f,p].x * Distance[f][p] * 2 for f in F).getValue()): <15}" , end='')
     print(f" {int(quicksum(X[f,p].x * Distance[f][p] * TRound for f in F).getValue()): <15} {int(quicksum(X[f,p].x * Supply[f] for f in F).getValue())} / {PMax[p]}\n")

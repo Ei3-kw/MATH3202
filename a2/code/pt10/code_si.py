@@ -75,14 +75,13 @@ for p in P:
         m.addConstr(V[p,t] == (quicksum(U[p,t,k] for k in K) - W[p,t]))
 
         for r in R:
-            for k in K:
-            #if Milkruns[r][ORGANIC]:
+            if Milkruns[r][ORGANIC]:
                 # if a run is used and is organic, set the binary variable to indicate this
-                m.addConstr(U[p,t,k] >= X[p,r,t] if Milkruns[r][ORGANIC] == k)
+                m.addConstr(U[p,t,1] >= X[p,r,t])
 
-            #else:
-                # if a run is used and is non organic, set the binary variable to indicate this
-                #m.addConstr(U[p,t,1] >= X[p,r,t])
+            else:
+                # if a run is used and is non-organic, set the binary variable to indicate this
+                m.addConstr(U[p,t,0] >= X[p,r,t])
 
             # for processing facility p, if the Milkrun does not originate from p the tanker cannot be assigned to this route
             if Milkruns[r][PF] != p:
@@ -99,7 +98,6 @@ for p in P:
                 # if there is only one farm on the route, there is no need for breaks 
                 m.addConstr(Y[p,r,t] == 0)
 
-
         # tankers must be used in order (this way the cheaper maintenance fees are not automatically applied)
         if t > 0:
             m.addConstr(W[p,t] <= W[p,t-1])
@@ -109,11 +107,6 @@ for f in F:
     m.addConstr(quicksum(X[p,r,t] for p in P for r in R for t in T if f in Milkruns[r][FARMS]) == 1)
 
 m.optimize()
-
-for p in P:
-    for t in T:
-        print(f"PF{p}, {Tankers[t]}: {U[p,t,0].x} {U[p,t,1].x} {V[p,t].x}")
-        print(f"{W[p,t].x}")
 
 if m.status == GRB.INFEASIBLE:
     print("The model is infeasible.")  
@@ -131,6 +124,15 @@ print(f"{'-'*52}\n")
 
 for p in P:
     supply = 0
+    time = 0
+    cost = 0
+    breaks = 0
+    cleaning = 0
+
+    # calculate total cleaning time between runs for each processing facility 
+    for t in T:
+        cleaning += (Z[p,t].x - W[p,t].x) * BetweenRuns
+
     print(f"PROCESSING FACILITY {p}")
     print(f"{'-'*110}\n{'Run': <6} {'Farms': <16} {'Milktype': <15} {'Travel (min)': <15} {'Breaks (min)': <15} {'Cost ($)': <11} {'Tanker': <11} {'Supply (L)': <15}\n{'-'*110}")
     for r in R:
@@ -139,9 +141,12 @@ for p in P:
                 for i in range(len(Milkruns[r][FARMS])):
                     if i == 0:
                         print(f"{r: <6} {Farms[Milkruns[r][FARMS][i]]: <16} {MilkTypes[Milkruns[r][ORGANIC]]: <15} {Milkruns[r][TIME]: <15} {Y[p,r,t].x: <15.0f} {Milkruns[r][COST]: <11} {Tankers[t]: <11} {Supply[Milkruns[r][FARMS][i]]: <15}")
+                        time += Milkruns[r][TIME]
+                        cost += Milkruns[r][COST]
+                        breaks += Y[p,r,t].x
                     else:
                         print(f"{' '*6} {Farms[Milkruns[r][FARMS][i]]: <16} {' '*15} {' '*15} {' '*15} {' '*11} {' '*11} {Supply[Milkruns[r][FARMS][i]]: <15}")
                     supply += Supply[Milkruns[r][FARMS][i]]
     print(f"{'-'*110}")
-    print(f"{' '*6} {' '*16} {' '*15} {' '*15} {' '*15} {' '*11} {' '*11} {supply} / {PMax[p]}\n")
+    print(f"{' '*6} {' '*16} {' '*15} {time: <15} {breaks: <2.0f} {'(+'} {cleaning: <3.0f}{')': <6} {cost: <11} {' '*11} {supply} / {PMax[p]}\n")
 

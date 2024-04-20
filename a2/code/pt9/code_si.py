@@ -112,6 +112,13 @@ print(f"{'-'*52}\n")
 
 for p in P:
     supply = 0
+    time = 0
+    breaks = 0
+    cost = 0
+    cleaning = 0
+
+    for t in T:
+        cleaning += (Z[p,t].x - W[p,t].x) * BetweenRuns
     print(f"PROCESSING FACILITY {p}")
     print(f"{'-'*95}\n{'Run': <6} {'Farms': <16} {'Travel (min)': <15} {'Breaks (min)': <15} {'Cost ($)': <11} {'Tanker': <11} {'Supply (L)': <15}\n{'-'*95}")
     for r in R:
@@ -120,9 +127,14 @@ for p in P:
                 for i in range(len(Milkruns[r][FARMS])):
                     if i == 0:
                         print(f"{r: <6} {Farms[Milkruns[r][FARMS][i]]: <16} {Milkruns[r][TIME]: <15} {Y[p,r,t].x: <15.0f} {Milkruns[r][COST]: <11} {Tankers[t]: <11} {Supply[Milkruns[r][FARMS][i]]: <15}")
+                        time += Milkruns[r][TIME]
+                        breaks += Y[p,r,t].x
+                        cost += Milkruns[r][COST]
                     else:
                         print(f"{' '*6} {Farms[Milkruns[r][FARMS][i]]: <16} {' '*15} {' '*15} {' '*11} {' '*11} {Supply[Milkruns[r][FARMS][i]]: <15}")
                     supply += Supply[Milkruns[r][FARMS][i]]
     print(f"{'-'*95}")
-    print(f"{' '*6} {' '*16} {' '*15} {' '*15} {' '*11} {' '*11} {supply} / {PMax[p]}\n")
+    print(f"{' '*6} {' '*16} {time: <15} {breaks: <2.0f} {'(+'} {cleaning: <3.0f}{')': <6} {cost: <11} {' '*11} {supply} / {PMax[p]}\n")
+
+
 

@@ -118,8 +118,8 @@ for p in P:
     for f in F:
         for t in T:
             if X[p,f,t].x:
-                print(f"{Farms[f]: <18} {Distance[f][p]: <15} {Distance[f][p] * TRound: <15} {Supply[f]: <15} {Tankers[t]: <15}")
+                print(f"{Farms[f]: <18} {Distance[f][p] * 2: <15} {Distance[f][p] * TRound: <15} {Supply[f]: <15} {Tankers[t]: <15}")
     print(f"{'-'*80}")
-    print(f"{' '*18} {int(quicksum(X[p,f,t].x * Distance[f][p] for f in F for t in T).getValue()): <15}", end='')
+    print(f"{' '*18} {int(quicksum(X[p,f,t].x * Distance[f][p] * 2 for f in F for t in T).getValue()): <15}", end='')
     print(f" {int(quicksum(X[p,f,t].x * Distance[f][p] * TRound for f in F for t in T).getValue()): <15}", end='')
     print(f" {int(quicksum(X[p,f,t].x * Supply[f] for f in F for t in T).getValue())} / {PMax[0]}\n")
