@@ -32,10 +32,10 @@ We were once again consulted by Teal Cow Dairy to maximise the profit of their b
 Teal Cow Dairy are in the process of expanding their operations since their previous communication. They now have additional farms and processing facilities whose relative positions are depicted in the below map: 
 
 \begin{tikzpicture}
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[font=\footnotesize]
 
 \begin{axis}[
-    scale = 1.8,
+    scale = 2,
     grid = major,
     xmin=-6, xmax=105,
     ymin=5, ymax=105,
@@ -80,6 +80,7 @@ x   y   label
 \end{tikzpicture}
 
 Each of of the processing facilities has a fleet of 5 tanker trucks which are used to collect milk from the supplying farms and transport it to the processing facilities where it is turned into saleable product. The client aims to optimise the use of these tankers in consideration of running, maintenance and cleaning costs and constraints on processing and supply. 
+\newpage
 
 ## Mathematical Formulations
 ### Communication 7
@@ -101,7 +102,7 @@ Each of of the processing facilities has a fleet of 5 tanker trucks which are us
 $$
 \begin{split}
 W_{pt}  &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ is operational} \\ 0 &\quad \textrm{otherwise} \end{cases} \\
-X_{prt} &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ performs milk run } r \in R \\ 0 &\quad \textrm{otherwise} \end{cases}
+X_{pft} &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ is assigned to farm } f \in F \\ 0 &\quad \textrm{otherwise} \end{cases}
 \end{split}
 $$
 
@@ -118,10 +119,10 @@ $$\sum_{f \in F} \, \sum_{t \in T} X_{pft} \times \textrm{Supply}_{f} \geq \text
 - Each tanker $t \in T$ for processing facility $p \in P$ cannot be operational for more than $10$ hours ($600$km). 
 $$\sum_{f \in F} X_{pft} \times \textrm{Distance}_{fp} \times 2 \leq \textrm{DMax}, \quad \forall p \in P, \; t \in T$$
 
-- If a tanker $t \in T$ is operation, set the binary variable to indicate this. 
-$$W_{pt} \geq X_{prt}, \quad \forall p \in P, \; t \in T, \; r \in R$$
+- If a tanker $t \in T$ is operational, set the binary variable to indicate this. 
+$$W_{pt} \geq X_{pft}, \quad \forall p \in P, \; t \in T, \; f \in F$$
 
-- Tankers must be used in order, i.e., tanker 1 and then tanker 2 etc., 
+- Tankers must be used in order (i.e., tanker 1 and then tanker 2 etc.,). This ensures lower maintenance costs are not automatically applied. 
 $$W_{pt} \leq W_{p(t-1)}, \quad \forall p \in P, \; t \in T, \; t > 0$$
 
 - Each farm $f \in F$ must be assigned to exactly one processing facility and one tanker. 
@@ -146,9 +147,9 @@ $$\sum_{p \in P} \, \sum_{t \in T} X_{pft} = 1, \quad \forall f \in F$$
 - $\textrm{RunF}_{r}$ - farms visited on milk run $r \in R$
 - $\textrm{RunT}_{r}$ - time taken to complete milk run $r \in R$ (min)
 - $\textrm{RunC}_{r}$ - cost of travel for milk run $r \in R$ ($)
-- $\textrm{RunO}_{r}$ - binary value indicating whether milk run $r \in R$ is organic
+- $\textrm{RunO}_{r}$ - binary value indicating whether milk run $r \in R$ is organic (true if organic, false otherwise)
 - $\textrm{BFarms}$ - delay between farms on a milk run (min)
-- $\textrm{BRuns}$ - cleaning time between milk runs (min)
+- $\textrm{BRuns}$ - cleaning time between milk runs performed by a single tanker (min)
 
 ### Variables
 $$
@@ -157,8 +158,8 @@ U_{ptk} &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p 
 V_{pt}  &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ performs both organic and non-organic milk runs} \\ 0 &\quad \textrm{otherwise} \end{cases} \\
 W_{pt}  &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ is operational} \\ 0 &\quad \textrm{otherwise} \end{cases} \\
 X_{prt} &= \begin{cases} 1 &\quad \textrm{if tanker } t \in T \textrm{ from } p \in P \textrm{ performs milk run } r \in R \\ 0 &\quad \textrm{otherwise} \end{cases} \\
-Y_{prt} &\; \textrm{- number of extra minutes taken by a tanker } t \in T \textrm{ from facility } p \in P \textrm{ between the farms on milk run } r \in R \\
-Z_{pt}  &\; \textrm{- number of routes performed by tanker } t \in T \textrm{ from processing facility } p \in P
+Y_{prt} &\; \textrm{- number of minutes of break taken by tanker } t \in T \textrm{ from } p \in P \textrm{ between the farms on milk run } r \in R \\
+Z_{pt}  &\; \textrm{- number of routes performed by tanker } t \in T \textrm{ from } p \in P
 \end{split}
 $$
 
@@ -181,27 +182,27 @@ $$Z_{pt} = \sum_{r \in R} X_{prt}, \quad \forall p \in P, \; t \in T$$
 - If a tanker $t \in T$ from processing facility $p \in P$ performs both organic and non-organic milk runs, set the binary variable to indicate this. 
 $$V_{pt} = \Big( \sum_{k \in K} U_{ptk} \Big) - W_{pt}, \quad \forall p \in P, \; t \in T$$
 
-- If a tanker $t \in T$ from processing facility $p \in P$ performs a non-organic milk run, set the binary variable to indicate this. 
-$$U_{ptk} >= X_{pr0}, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ if not RunO}_r$$
+- If a tanker $t \in T$ from processing facility $p \in P$ performs a non-organic milk run ($k=0$), set the binary variable to indicate this. 
+$$U_{pt0} >= X_{prt}, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ if not RunO}_r$$
 
-- If a tanker $t \in T$ from processing facility $p \in P$ performs an organic milk run, set the binary variable to indicate this. 
-$$U_{ptk} >= X_{pr1}, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ if RunO}_r$$
+- If a tanker $t \in T$ from processing facility $p \in P$ performs an organic milk run ($k=1$), set the binary variable to indicate this. 
+$$U_{pt1} >= X_{prt}, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ if RunO}_r$$
 
 - If a milk run does not originate from processing facility $p \in P$, it cannot be assigned to a tanker at that facility.
 $$X_{prt} = 0, \quad \forall p \in P, \; t \in T, \; r \in R \textrm{ if RunP}_{r} \neq p $$ 
 
-- If a tanker $t \in T$ is operation, set the binary variable to indicate this. 
+- If a tanker $t \in T$ is operational, set the binary variable to indicate this. 
 $$W_{pt} \geq X_{prt}, \quad \forall p \in P, \; t \in T, \; r \in R$$
 
 - If a milk run is assigned to a tanker $t \in T$ and processing facility $p \in P$ and the run visits multiple farms, the number of minutes required for breaks between the farms is recorded. If there is only one farm on the milk run, no breaks are required. 
 $$
 Y_{prt} = \begin{cases} 
-X_{prt} \times \big( | RunF_{r} | - 1 \big) \times \textrm{BFarms}, &\quad \textrm{if } | \textrm{RunF}_{r} | > 0 \\
+X_{prt} \times \big( | \textrm{RunF}_{r} | - 1 \big) \times \textrm{BFarms}, &\quad \textrm{if } | \textrm{RunF}_{r} | > 0 \\
 0, &\quad \textrm{otherwise} 
 \end{cases}, \quad \forall p \in P, \; t \in T, \; r \in R 
 $$
 
-- Tankers must be used in order, i.e., tanker 1 and then tanker 2 etc., 
+- Tankers must be used in order (i.e., tanker 1 and then tanker 2 etc.,). This ensures lower maintenance costs are not automatically applied. 
 $$W_{pt} \leq W_{p(t-1)}, \quad \forall p \in P, \; t \in T, \; t > 0$$
 
 - Each farm $f \in F$ must be visited on one of the assigned routes. 
@@ -210,7 +211,7 @@ $$\sum_{p \in P} \, \sum_{r \in R} \, \sum_{t \in T} X_{prt} = 1, \quad \forall 
 \newpage
 
 # Section B: Report to the client
-Minimising cost while continuing to deliver exceptional services is one of the most challenging problems that companies face and we are pleased you chose our operations research firm to find solutions to this problem. After extensive review of the updated business goals and requirements of Teal Cow Dairy, we have devised an optimal strategy for expansion which minimises cost of milk collections while conforming to constraints and regulations. In this report, we provide a break-down of this strategy and offer key insights to support future growth of Teal Cow Dairy. 
+Minimising cost while continuing to deliver exceptional services is one of the most challenging problems that companies face. We are pleased you chose our operations research firm to offer our expertise in regards to this problem, and we are dedicated to providing you with the very best solutions and insights. After extensive review of the updated business goals and requirements of Teal Cow Dairy, we have devised an optimal strategy for expansion which minimises cost of milk collections while conforming to constraints and regulations. In this report, we provide a break-down of this strategy and offer key insights to support the future growth of Teal Cow Dairy. 
 
 ## Communication 6
 Based on the communicated information, the minimum total cost of collections such that the supply of all dairy farms is transported to processing facilities is $4555. This minimum cost assumes an average speed of 60 km/h for each tanker and an average travel cost of 5 $/km. 
@@ -226,12 +227,12 @@ Broken down by processing facility, the cost of collections in the optimal strat
 \textbf{PF1}    & 578                       & 1445                  \\
 \textbf{PF2}    & 608                       & 1520                  \\ \hline
                 & 1822                      & 4555
-\end{tabular}
+\end{tabular} \medbreak
 
-Graphically, farms should be assigned to processing facilities as follows:
+Graphically, our optimal solution suggests farms should be assigned to processing facilities as follows:
 
 \begin{tikzpicture}
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[font=\footnotesize]
 
 \begin{axis}[
     scale = 1.8,
@@ -246,8 +247,8 @@ Graphically, farms should be assigned to processing facilities as follows:
     ]
 
 \addplot[color=egyptianblue,mark=\empty] coordinates {(93, 14) (25, 11)};           % PF0
-\addplot[color=frenchrose,mark=\empty] coordinates {(54, 84) (36, 41)};           % PF1
-\addplot[color=sacramentostategreen,mark=\empty] coordinates {(13, 88) (2, 18)};            % PF2
+\addplot[color=frenchrose,mark=\empty] coordinates {(54, 84) (36, 41)};             % PF1
+\addplot[color=sacramentostategreen,mark=\empty] coordinates {(13, 88) (2, 18)};    % PF2
 
 \addplot[scatter, mark=*, only marks, point meta=explicit symbolic, nodes near coords,] table[x=x, y=y, meta=label] {
 x   y   label
@@ -316,7 +317,7 @@ x   y   label
 - Assuming each processing facility has a single tanker, the optimal strategy requires that each tanker is operational for an average of 10.12 hours per day. 
 
 ## Communication 7
-In response to your seventh communication, we revised our model to incorporate a fleet of 5 tankers for each processing facility. Considering restrictions on the maximum number of operational hours per day for each tanker and the important factor of maintenance costs, the revised optiminal strategy results in a minimum cost of collections of $6680. This is an increase from the previous estimate, but this is to be expected as additional costs have been introduced in order to account for operational restrictions vital to health and safety of tanker drivers. 
+In response to your seventh communication, we revised our model to incorporate a fleet of 5 tankers for each processing facility. Considering restrictions on the maximum number of operational hours per day for each tanker (10 hours) and the important factor of daily maintenance costs for each operational tanker in the fleet, the revised optiminal strategy results in a minimum cost of collections of $6680. This is an increase from the previous estimate, but this is to be expected as additional costs have been introduced in order to account for operational restrictions vital to ensure the health and safety of tanker drivers. 
 
 Broken down by processing facility, the revised optimal strategy for the cost of collections is as follows:
 
@@ -327,11 +328,11 @@ Broken down by processing facility, the revised optimal strategy for the cost of
 \textbf{PF1}    & 568                       & 1420                  & 500                       & 1920                          \\
 \textbf{PF2}    & 578                       & 1445                  & 500                       & 1945                          \\ \hline
                 & 1884                      & 4710                  & 1970                      & 6680
-\end{tabular}
+\end{tabular} \medbreak 
 
-The revised assignment of farms to processing facilities is as follows:
+The revised assignment of farms to processing facilities is given below:
 \begin{tikzpicture}
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[font=\footnotesize]
 
 \begin{axis}[
     scale = 1.8,
@@ -411,13 +412,15 @@ x   y   label
 \end{tikzpicture}
 
 ### Key Insights
-- The optimal solution uses the minimum possible number of total tankers between all processing facilities which is to be expected as the maintenance costs of tankers constitute a significant proportion of the total cost of collections - approximately 30%. To further reduce collection costs, Teal Cow Dairy can consider making adjustments to further decrease the number of operational tankers and hence reduce maintenance costs. In particular, in the optimal solution presented, the total collective distance travelled by the tankers to collect the supply of all farms is 1884km. This amounts to 31.4 travel hours for each tanker from which it can be concluded that reducing travel time by 1.4 hours will reduce the number of required tankers to 3, resulting in decreased maintenance costs and overall collection costs. 
+- The optimal solution uses the minimum possible number of total tankers between all processing facilities so that no tanker is operational for more than 10 hours. This is to be expected as the maintenance costs of tankers constitute a significant proportion of the total cost of collections - approximately 30%. 
 
-- With the introduction of maintenance costs of tankers, additional farms are assigned to PF0 than in the previous optimal solution to allow for only 4 tankers being operational. This increases the total distance needing to be travelled to perform collections from 1822km to 1884km which amounts to a \$310 increase in travel costs. This consideration further establishes a need to optimise milk run routes so that the tankers of PF1 and PF2 have the operational capacity to perform milk runs for all nearby farms. 
+- To further reduce collection costs, Teal Cow Dairy can consider making adjustments to the business strategy which will decrease the number of operational tankers from four to three - a single tanker for each processing facility. This change immediately decreases the cost of collections by eliminating \$470 in daily maintenance costs. More precisely, should be noted that in the optimal solution presented, the total collective distance travelled by the tankers to collect the supply of all farms is 1884km. This amounts to 31.4 travel hours for each tanker from which it can be concluded that reducing travel time by 1.4 hours will enable only three tankers to be operational. 
+
+- With the introduction of maintenance costs of tankers, additional farms are assigned to PF0 than in the previous optimal solution to allow for only four tankers being operational while all other constraints are still met. This increases the total distance needing to be travelled to perform collections from 1822km to 1884km which amounts to a \$310 increase in travel costs. This consideration further establishes a need to optimise milk run routes so that the tankers of PF1 and PF2 have the operational capacity to perform milk runs for all nearby farms rather than them being assigned to PF0. 
 
 ## Communication 8
-Allowing a tanker to visit multiple farms before returning to the processing facility provides an opportunity for decreasing the total distance travelled by the tanker fleets of each processing facility and hence, the operational time of each tanker and the total cost of collections. Reevaluating the model while taking into account the provided possible routes between farms and processing facilities gives a new minimum cost of collections of $4686. The optimal strategy results in a considerable \$1994 decrease in the cost of collections from the previous communication suggesting these operational changes to be for the benefit of Teal Cow Dairy. 
-
+Allowing a tanker to visit multiple farms before returning to the processing facility provides an opportunity for decreasing the total distance travelled by the tanker fleets of each processing facility and hence, the operational time of each tanker and the total cost of collections. Reevaluating the model while taking into account the provided possible routes between farms and processing facilities gives a new minimum cost of collections of $4686. This revised model, still considers all of the previously provided constraints while substituting information on distances between farms and processing facilities for the pre-computed times of each milk run. The new optimal strategy involves a considerable \$1994 decrease in the cost of collections from the previous communication, suggesting these operational changes to be for the benefit of Teal Cow Dairy. 
+ 
 Broken down by processing facility, the new costs of collections in the optimal strategy are as follows:
 
 ### Table 3 - Breakdown of collection costs per processing facility 
@@ -427,14 +430,12 @@ Broken down by processing facility, the new costs of collections in the optimal 
 \textbf{PF1}    & 435                           & 980                   & 500                       & 1480                          \\
 \textbf{PF2}    & 495                           & 1246                  & 500                       & 1746                          \\ \hline
                 & 1363                          & 3186                  & 1500                      & 4686
-\end{tabular}
-
-This revised model takes into account all of the previously provided constraints while substituting information on distances between farms and processing facilities for the pre-computed times of each milk run. As travel time is reduced through allowing multiple farms to be visited on each milk run, only a single tanker from each processing facility needs to be utilised which reduces the cost of maintenance. 
+\end{tabular} \medbreak 
 
 A map of the milk runs which should be performed by each tanker in the the optimal strategy is given below:
 
 \begin{tikzpicture}
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[font=\footnotesize]
 
 \begin{axis}[
     scale = 1.8,
@@ -503,12 +504,14 @@ x   y   label
 \end{tikzpicture}
 
 ### Key Insights
-- Since only a single tanker out of each fleet is operational in the optimal strategy, further reduction in maintenance costs is not possible outside of researching alternative maintenance providers with lower daily fees. 
+- As travel time is reduced through allowing multiple farms to be visited on each milk run, only a single tanker from each processing facility needs to be utilised in the optimal strategy. This reduces the daily cost of maintenance by \$470 compared to the previous solution. As each processing facility uses only one tanker, further reduction in maintenance costs is not possible outside of researching alternative maintenance providers with lower daily fees. 
 
-- The cost of collections for processing facility 2 is the greatest out of the three facilities by a margin of more than \$200. This correlates with the high travel times associated with milk runs to and from this facility. To further optimise collections, Teal Cow Dairy may want to consider reaching out to alternative suppliers within the vicinity of PF2 for which there is a lower cost of collections. 
+- Unlike the previous solution, each processing facility is now assigned only nearby farms as evidenced by the visual. In particular, it can be seen that Happy Cows is no longer assigned to PF1 which contributes to a reduction in travel costs. This is a positive factor which provides support for the decision to add multiple farms to each run performed by a tanker. 
+
+- The cost of collections for PF2 is the greatest out of the three facilities by a margin of more than \$200. This correlates with the high travel times associated with milk runs to and from this facility. To further optimise collections, Teal Cow Dairy may want to consider reaching out to alternative suppliers within the vicinity of PF2 for which there is a lower cost of collections. 
 
 ## Communication 9
-The mathematical model was again revised to include breaks of 15 minutes between farms on a milk run and 60 minute cleaning breaks between each milk run performed by a tanker. The minimum cost of collections in an optimal strategy which accounts for these breaks is \$5633. This is an increase of \$947 from the previous minimum cost of collections. 
+In response to your communication regarding driver feedback, the mathematical model was again revised to include breaks of 15 minutes between farms on a milk run and 60 minute cleaning breaks between each milk run performed by a tanker. We understand this will reduce the stress on your drivers and is an important factor for consideration. The minimum cost of collections in an optimal strategy which accounts for these breaks is \$5633. This is an increase of \$947 from the previous minimum cost of collections. 
 
 Broken down by processing facility, the revised times and costs of collections are as follows:
 
@@ -528,12 +531,12 @@ Broken down by processing facility, the revised times and costs of collections a
 \textbf{PF1}    & 312                   & 60                                    & 120                                   & 492                           \\
 \textbf{PF2}    & 495                   & 30                                    & 120                                   & 645                           \\ \hline
                 & 1346                  & 120                                   & 420                                   & 1886
-\end{tabular}
+\end{tabular} \medbreak 
 
-Graphically, the optimal milk run assignments to processing facilities and tankers are as follows:
+Graphically, the new optimal milk run assignments to processing facilities and tankers are as follows:
 
 \begin{tikzpicture}
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[font=\footnotesize]
 
 \begin{axis}[
     scale = 1.8,
@@ -605,12 +608,14 @@ x   y   label
 \end{tikzpicture}
 
 ### Key Insights
-- With the inclusion of breaks between farms and milk runs, the time investment in collections is increased resulting in more tankers needing to be used so that no tanker is operational for more than 10 hours. In the revised optimal strategy, 2 tankers from the fleets of processing facilities 0 and 1 need to be operational. This has a significant impact on the minimum cost of collections as it means an extra \$940 needs to be spent on tanker maintenance. This brings the proportion of collection costs attributed to maintenance to 43%. 
+- With the inclusion of breaks between farms and milk runs, the time investment in collections is increased resulting in more tankers needing to be used so that no tanker is operational for more than 10 hours. In the revised optimal strategy, two tankers from the fleets of PF0 an PF2 need to be operational. This has a significant impact on the minimum cost of collections as it means an extra \$940 needs to be spent on tanker maintenance. This brings the proportion of collection costs attributed to maintenance to 43% which is the highest proportion encountered in all of our revisions. 
 
-- An area for consideration to reduce maintenance costs is increasing the capacity of tankers. The current operational time required to perform all collections for PF2 is only 45 minutes above the maximum for a single tanker. Using a tanker with a higher capacity could reduce the number of runs needed to perform all collections for PF2, thus reducing collection time and the number of necessary tankers. While investing in a new tanker may incur a high immediate cost, the long term savings on daily maintenance costs would cover this cost and result in net profit. 
+- An area for consideration to reduce maintenance costs is increasing the capacity of tankers. The current operational time required to perform all collections for PF2 is 645 minutes which is only 45 minutes above the maximum for a single tanker. Using a tanker with a higher capacity could reduce the number of runs needed to perform all collections for PF2 by enabling longer runs which visit more farms to be performed. This in turn would reduce the total collection time for PF2 and hence the number of necessary tankers. While investing in a new tanker may incur a high immediate cost, the long term savings on daily maintenance costs would cover this cost and result in net profit. 
+
+- An alternative strategy to reduce the current operational times of tankers in the optimal solution is investing in strategies or technologies which shorten the cleaning time between milk runs made by the same tanker. For example, 120 minutes of the current operational time for tanker 1 of PF2 is dedicated to cleaning. Decreasing this cleaning time may potentially eliminate the need for another tanker. 
 
 ## Communication 10
-Taking into account organic and non-organic suppliers and related constraints, the minimum cost of collections in an optimal solution becomes \$5796. This is only a \$163 increase from the previous solution. 
+We were pleased to hear of your continued interest in a broad range of milk products and once again adjusted our mathematical model to account for the distinctions between organic and non-organic supplying dairies. Taking into account these organic and non-organic suppliers and related constraints, the minimum cost of collections in an optimal solution becomes \$5796. This is only a \$163 increase from the previous solution and does not impact the number of tankers that are operational. The main difference in the solution is a reassignment of all organic supplying dairies to a single processing facility. 
 
 Broken down by processing facility, the revised times and costs of collections are as follows:
 
@@ -630,12 +635,12 @@ Broken down by processing facility, the revised times and costs of collections a
 \textbf{PF1}    & 525                   & 60                                    & 180                                   & 765                           \\
 \textbf{PF2}    & 495                   & 30                                    & 120                                   & 645                           \\ \hline
                 & 1417                  & 105                                   & 480                                   & 2002
-\end{tabular}
+\end{tabular} \medbreak 
 
 The revised assignments of milk runs to processing facilities and tankers is as follows:
 
 \begin{tikzpicture}
-\tikzstyle{every node}=[font=\tiny]
+\tikzstyle{every node}=[font=\footnotesize]
 
 \begin{axis}[
     scale = 1.8,
@@ -671,6 +676,10 @@ x   y   label
 34  56  {Velvet Valley}
 16  69  {Moonybrook}
 80  30  {Cloven Hills}
+};
+
+\addplot[scatter, mark=triangle*, only marks, point meta=explicit symbolic, nodes near coords,] table[x=x, y=y, meta=label] {
+x   y   label
 71  56  {Midnight Moo}
 67  63  {Willows Bend}
 81  48  {Moosa Heads}
@@ -678,6 +687,7 @@ x   y   label
 73  98  {Happy Hooves}
 89  98  {Highlands}
 };
+
 
 % PF0
 \addplot[color=egyptianblue,mark=\empty] coordinates {(93, 14) (36, 16)};
@@ -704,13 +714,13 @@ x   y   label
 13  88  PF2
 };
 
-\legend{PF0 - Tanker 1, PF1 - Tanker 1, PF1 - Tanker 2, PF2 - Tanker 1, PF2 - Tanker 2}
+\legend{PF0 - Tanker 1, PF1 - Tanker 1, PF1 - Tanker 2, PF2 - Tanker 1, PF2 - Tanker 2, Non-Organic Dairies, Organic Dairies}
 
 \end{axis}
 \end{tikzpicture}
 
 ### Key Insights
-- Accounting for the distinction between organic and non-organic milk runs, including adding time for deep cleans between milk runs of different types, does not change the minimum number of operational tankers to perform collections. As with the previous communication, 5 tankers are required in total to perform all milk collections; however, it is now PF1, not PF0, which has two operational tankers. 
+- Accounting for the distinction between organic and non-organic milk runs, including adding time for deep cleans between milk runs of different types, does not change the minimum number of operational tankers to perform collections. As with the previous communication, five tankers are required in total to perform all milk collections; however, it is now PF1, not PF0, which has two operational tankers. 
 
 - Again, collections for PF2 take 645 minutes in total which is 45 minutes above the maximum operational time of a single tanker suggesting investment into a tanker with a greater capacity to still be a valid area for consideration to reduce costs. It is also worth noting that since all milk runs from PF2 are for non-organic milk, using only one tanker in this way will not incur additional fees for deep cleans. 
 
