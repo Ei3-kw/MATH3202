@@ -53,11 +53,12 @@ How much should the farmer feed his herd each week during the season? Please pro
 - $P$ - price of the milk from per unit of grass (\$)
 - $R_t$ - required grass at time $t$ per cow (10kg)
 - $G_t$ - growth of the grass at time $t$ (10kg)
-- $F_t$ - grass on the field at time $t$ (10kg)
 - $F_0$ - grass on the field at time initially (10kg)
 \
 == Variables
 - $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
+- $F_t$ - grass on the field at time $t$ (10kg)
+
 \
 == Objective function
 $ max(P times sum_(t in T) sum_(c in C) (X_("ct")-R_t)) $
