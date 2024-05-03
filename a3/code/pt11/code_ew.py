@@ -21,25 +21,28 @@ def pasture(p):
     return round(p + 0.61*p*(1-p/300))
 
 f_0 = 100
-
-
 feed_amounts = [0] * 52
+
 
 @lru_cache(maxsize=None)
 def max_revenue(t, grass):
     max_rev = 0
 
+    # end of season
     if t == 52:
         return max_rev
 
     r = required(t)
 
     for feed in range(r, r+41):
+        # Cows can’t eat more than the amount of existing grass
         if feed > grass:
             continue
+
         # total = this wk + furture
         total_rev = (feed - r) * P \
             + max_revenue(t + 1, pasture(grass) - feed)
+
         if total_rev > max_rev:
             max_rev = total_rev
             feed_amounts[t] = feed
