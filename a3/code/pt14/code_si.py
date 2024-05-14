@@ -39,7 +39,7 @@ _revenue = {}
 def revenue(t,s,d):
 
     if s < required(t):
-        return (-10000, "Infeasible")
+        return (-float('inf'), "Infeasible")
     
     if (t,s,d) not in _revenue:
 

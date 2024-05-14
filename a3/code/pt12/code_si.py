@@ -34,7 +34,7 @@ def revenue(t,s):
     
     # there is not enough grass to feed the herd, the solution is infeasible 
     if s < required(t):
-        return (-10000, "Infeasible")
+        return (-float('inf'), "Infeasible")
 
     if (t,s) not in _revenue:
 

@@ -1,4 +1,4 @@
-
+import math 
 # SETS
 cows = ['Lily', 'Betty', 'Clover', 'Rosie']
 
@@ -38,7 +38,7 @@ def revenue(t,s):
     
     # there is not enough grass to feed the herd, the solution is infeasible
     if s < required(t):
-        return (-10000, "Infeasible")
+        return (-float('inf'), "Infeasible")
     
     if (t,s) not in _revenue:
 
@@ -83,5 +83,5 @@ def get_feed_amounts():
     print(f"{'-'*65}\n")
 
 print(f"\nTOTALS:\n{'-'*65}")
-print(f"Total revenue from milk sold: {round(revenue(0, s_0)[0], 3)}\n")
-#get_feed_amounts()
+print(f"Total revenue from milk sold: {round(revenue(0,s_0)[0], 2)}\n")
+

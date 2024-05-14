@@ -53,7 +53,7 @@ _revenue = {}
 def revenue(t,s,l):
 
     if s < dryenergy(t,l):
-        return (-10000, "Infeasible")
+        return (-float('inf'), "Infeasible")
     
     if (t,s,l) not in _revenue:
 
