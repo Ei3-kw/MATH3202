@@ -43,7 +43,7 @@ def revenue(t,s):
     if (t,s) not in _revenue:
 
         # determine the current available grass units
-        available = s-required(t-1)
+        available = s-required(t)
 
         # determine how much grass is available at the end of the week for each weather scenario
         available_good = pasture(s,'Good')-required(t)
@@ -61,26 +61,6 @@ def revenue(t,s):
                                 for a in range(min(maxUnits+1, available+1)))
 
     return _revenue[t,s]
-
-""" returns the number of units of feed given to the herd each week """
-def get_feed_amounts():
-    feed_amounts = [0] * W
-    s = s_0
-    total = 0
-
-    for t in range(W):
-        feed_amounts[t] = revenue(t,s)[1]+required(t)
-        total += P*revenue(t,s)[1]
-        s = pasture(s)-revenue(t,s)[1]-required(t)
-    
-    print(f"Total revenue calculated using feed amounts: {round(total, 3)}")
-    print(f"\nBREAKDOWN BY WEEK:")
-    print(f"{'-'*65}\n| {'Week':<6} {'Feed':<6} | {'Week':<6} {'Feed':<6} | ", end='')
-    print(f"{'Week':<6} {'Feed':<6} | {'Week':<6} {'Feed':<6} |\n|{'-'*63}|")
-    for n in range(13):
-        print(f"| {n:<6} {feed_amounts[n]:<6} | {13+n:<6} {feed_amounts[13+n]:<6} | ", end='')
-        print(f"{26+n:<6} {feed_amounts[26+n]:<6} | {39+n:<6} {feed_amounts[39+n]:<6} |")
-    print(f"{'-'*65}\n")
 
 print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0,s_0)[0], 2)}\n")

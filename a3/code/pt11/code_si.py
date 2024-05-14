@@ -32,7 +32,7 @@ def revenue(t,s):
     if (t,s) not in _revenue:
 
         # determine the current available grass units
-        available = s-required(t-1)
+        available = s-required(t)
         
         # determine how much grass is available at the end of the week
         available_next = pasture(s)-required(t)
