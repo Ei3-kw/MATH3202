@@ -1,28 +1,30 @@
+import matplotlib.pyplot as plt
+from numpy import arange, array
 
 # SETS
 cows = ['Lily', 'Betty', 'Clover', 'Rosie']
 
 C = range(len(cows))
-W = 52
 
 # DATA
-P   = 4.2       # selling price for each unit of milk 
-L   = 5.0       # penalty cost per unit under 150
+W = 52          # number of weeks
+P = 4.2         # selling price for each unit of milk 
+L = 5.0         # penalty cost per unit under 150
 s_0 = 100       # starting units of grass
 minGrass = 150  # minimum units of grass before a penalty is applied 
 maxUnits = 40   # maximum units of feed that can be converted into milk across the herd
 
-""" returns the units of grass below 150 """
 def penalty_grass(x):
-    x -= 150
+    """ calculate units of grass below 150 """
+    x -= minGrass
     return 0 if x >= 0 else abs(x)
 
-""" returns the units of grass available in the following week """
 def pasture(p):
+    """ calculate units of grass available next week """
     return round(p + 0.61*p*(1-p/300))
 
-""" returns the units of grass required to feed the herd each week """
 def required(t):
+    """ calculate units of grass required to feed the herd in week t """
     if t < 18:
         y = 10.241 + 0.13*t
     else:
@@ -32,14 +34,14 @@ def required(t):
 _revenue = {}
 def revenue(t,s):
     
-    # there is not enough grass to feed the herd, the solution is infeasible 
+    # if there is not enough grass to feed the herd, the solution is infeasible 
     if s < required(t):
         return (-float('inf'), "Infeasible")
 
     if (t,s) not in _revenue:
-
-        # determine the current available grass units
-        available = s-required(t)
+        
+        # determine the available grass units once the herd has been fed
+        available = s - required(t)
         
         # determine how much grass is available at the end of the week
         available_next = pasture(s)-required(t)
@@ -55,8 +57,8 @@ def revenue(t,s):
 
     return _revenue[t,s]
 
-""" returns the number of units of feed given to the herd each week """
 def get_feed_amounts():
+    """ determine the number of units of feed given to the herd each week """
     feed_amounts = [0] * W
     s = s_0
     total = 0
@@ -75,6 +77,34 @@ def get_feed_amounts():
         print(f"{26+n:<6} {feed_amounts[26+n]:<6} | {39+n:<6} {feed_amounts[39+n]:<6} |")
     print(f"{'-'*65}\n")
 
+    return feed_amounts
+
 print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0, s_0)[0], 3)}")
-get_feed_amounts()
+feed = get_feed_amounts()
+
+# edit settings 
+plt.figure(facecolor = '#008080') 
+plt.rcParams['axes.facecolor'] = '#008080'
+plt.rcParams.update({'text.color'       : 'white',
+                     'axes.labelcolor'  : 'white',
+                     'xtick.color'      : 'white',
+                     'ytick.color'      : 'white'
+                     })
+
+ax = plt.gca()
+ax.spines['bottom'].set_color('white')
+ax.spines['left'].set_color('white')
+ax.spines['top'].set_color('#008080')
+ax.spines['right'].set_color('#008080')
+
+# plot the optimal feed strategy 
+x = arange(0,52)
+y = array(feed)
+plt.xticks(arange(min(x), max(x), 2.0))
+plt.bar(x, y, color='white')
+plt.xlabel ('Week')
+plt.ylabel ('Feed')
+plt.tight_layout()
+
+plt.show()
