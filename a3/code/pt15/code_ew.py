@@ -29,7 +29,6 @@ minGrass  = 150  # minimum units of grass before a penalty is applied
 PGood     = 0.5  # probability of having good weather in the region
 dryFeed   = 3    # reduction in weekly feed per dry cow
 milkUnits = 10   # maximum units of feed that can be converted into milk per cow
-dryable   = 1    # number of cows that can be dried per week 
 
 """ returns the units of grass below 150 """
 def penalty_grass(x):
@@ -96,26 +95,18 @@ def revenue(t,s,l):
             dried = {}
             for i in C:
                 if l[i]:
-                new_l = list(l)
-                new_l[i] = 0
-                new_l = tuple(new_l)
-                dried[l] = max((PGood * (P*a + revenue(t+1, available_good-a, new_l)[0])
-                    + (1-PGood) * (P*a + revenue(t+1, available_poor-a, new_l)[0]),
-                    (a, new_l)) for a in range(min(maxUnits+1, available+1)))
+                    new_l = list(l)
+                    new_l[i] = 0
+                    new_l = tuple(new_l)
+                    dried[new_l] = max((PGood * (P*a + revenue(t+1, available_good-a, new_l)[0])
+                        + (1-PGood) * (P*a + revenue(t+1, available_poor-a, new_l)[0]),
+                        (a, new_l)) for a in range(min(maxUnits+1, available+1)))
 
             _revenue[t,s,l] = max(max(dried.values()), _revenue[t,s,l])
 
     return _revenue[t,s,l]
 
-def get_feed_amounts():
-    s = s_0
-    feed_amounts = [0] * 52
-
-    for t in range(0,52):
-        feed_amounts[t] = revenue(t,s)[1]
-        s = PGood * pasture(s, 'Good') + (1 - PGood) * pasture(s, 'Bad') - revenue(t,s)[1]
-
-    print(feed_amounts)
 
 print(f"Total revenue from milk sold: {round(revenue(0, s_0, l_0)[0], 3)}")
+# print(_revenue)
 #get_feed_amounts()
