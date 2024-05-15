@@ -38,7 +38,7 @@ def required(t):
 _revenue = {}
 def revenue(t,s,d):
 
-    if s < required(t):
+    if s < required(t)-dryFeed*d:
         return (-float('inf'), "Infeasible")
     
     if (t,s,d) not in _revenue:
@@ -47,7 +47,7 @@ def revenue(t,s,d):
         maxUnits = (4-d)*milkUnits
 
         # determine the current available grass units
-        available = s-required(t-1)+dryFeed*d
+        available = s-required(t)+dryFeed*d
         
         # determine how much grass is available at the end of the week for each weather scenario
         available_good = pasture(s,'Good')-required(t)+dryFeed*d
@@ -71,15 +71,6 @@ def revenue(t,s,d):
 
     return _revenue[t,s,d]
 
-def get_feed_amounts():
-    s = s_0
-    feed_amounts = [0] * 52
 
-    for t in range(0,52):
-        feed_amounts[t] = revenue(t,s)[1]
-        s = PGood * pasture(s, 'Good') + (1 - PGood) * pasture(s, 'Bad') - revenue(t,s)[1]
-
-    print(feed_amounts)
-
+print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0, s_0, 0)[0], 3)}")
-#get_feed_amounts()

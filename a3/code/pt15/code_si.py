@@ -29,6 +29,7 @@ def penalty_grass(x):
     x -= 150
     return 0 if x >= 0 else abs(x)
 
+""" updates the list of dried cows """
 def dry(l,b):
     lst = list(l)
     lst[b] = 0
@@ -65,7 +66,7 @@ def revenue(t,s,l):
         maxUnits = d*milkUnits
 
         # determine the current available grass units
-        available = s-dryenergy(t-1,l)
+        available = s-dryenergy(t,l)
         
         if t == 51 or d == 0:
             
@@ -95,16 +96,4 @@ def revenue(t,s,l):
 
     return _revenue[t,s,l]
 
-def get_feed_amounts():
-    s = s_0
-    feed_amounts = [0] * 52
-
-    for t in range(0,52):
-        feed_amounts[t] = revenue(t,s)[1]
-        s = PGood * pasture(s, 'Good') + (1 - PGood) * pasture(s, 'Bad') - revenue(t,s)[1]
-
-    print(feed_amounts)
-
 print(f"Total revenue from milk sold: {round(revenue(0, s_0, l_0)[0], 3)}")
-#get_feed_amounts()
-
