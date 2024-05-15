@@ -83,6 +83,7 @@ def revenue(t,s,l):
                                       for a in range(min(maxUnits+1, available+1)))
         else:
             # add the option of drying a cow
+
             dryCows = max((PGood     * (P*a + revenue(t+1, pasture(s,'Good')-dryenergy(t,dry(l,b))-a, dry(l,b))[0]) +
                            (1-PGood) * (P*a + revenue(t+1, pasture(s,'Poor')-dryenergy(t,dry(l,b))-a, dry(l,b))[0]),
                            (a,dry(l,b))) for a in range(min(maxUnits+1, available+1)) for b in C if l[b])
@@ -93,7 +94,10 @@ def revenue(t,s,l):
 
             _revenue[t,s,l] = max(dryCows, notDryCows)
 
-
     return _revenue[t,s,l]
 
 print(f"Total revenue from milk sold: {round(revenue(0, s_0, l_0)[0], 3)}")
+
+for i in range(0,301):
+    feed = revenue(12, i, (0,0,0,0))
+    print(feed[0][0])
