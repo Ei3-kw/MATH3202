@@ -50,27 +50,41 @@ How much should the farmer feed his herd each week during the season? Please pro
 - $T$ - time (week)
 \
 == Data
-- $P$ - price of the milk from per unit of grass (\$)
+- $P$ - price of the milk from per unit of grass (\$) = 4.2
 - $R_t$ - required grass at time $t$ per cow (10kg)
-- $G_t$ - growth of the grass at time $t$ (10kg)
-- $F_0$ - grass on the field at time initially (10kg)
+- $G (S)$ - grass on the field (10kg) at the end of the week given the amount at the start
+- $S_0$ - grass on the field at time initially (10kg) = 100
 \
-== Variables
-- $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
-- $F_t$ - grass on the field at time $t$ (10kg)
+// == Variables
+// - $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
+// - $F_t$ - grass on the field at time $t$ (10kg)
 
+// \
+// == Objective function
+// $ max(P times sum_(t in T) sum_(c in C) (X_("ct")-R_t)) $
+// \
+// == Constraints
+// - Cows can't eat more than the amount of existing grass at any week
+// $ forall t in T, sum_(c in C) X_("ct") <= F_t $
+
+// - Each cow needs to eat the minimum requirement every week
+// $ forall t in T, forall c in C, X_("ct") >= R_t $
+
+// - Grass balance & non neg
+// $ forall t in T, F_("t+1") = F_t + G_t - sum_(c in C) X_("ct") $
+// $ forall t in T, F_t >= 0 $
+
+== Stages
+- Weeks - $0 <= t <= 51$
 \
-== Objective function
-$ max(P times sum_(t in T) sum_(c in C) (X_("ct")-R_t)) $
+== State
+- $S_t$ - pasture at the start of week t
 \
-== Constraints
-- Cows can't eat more than the amount of existing grass at any week
-$ forall t in T, sum_(c in C) X_("ct") <= F_t $
+== Action
+- $A_t$ - the amount to feed the herd on week t
 
-- Each cow needs to eat the minimum requirement every week
-$ forall t in T, forall c in C, X_("ct") >= R_t $
-
-- Grass balance & non neg
-$ forall t in T, F_("t+1") = F_t + G_t - sum_(c in C) X_("ct") $
-$ forall t in T, F_t >= 0 $
-
+== Value Function
+$V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture"$
+\
+== General Case
+$V_t(S_t) = V_0(S_t - A_t)$

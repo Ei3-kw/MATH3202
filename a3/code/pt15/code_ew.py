@@ -24,6 +24,7 @@ W = 52
 P   = 4.2   # selling price for each unit of milk 
 L   = 5.0   # penalty cost per unit under 150
 s_0 = 100   # starting units of grass
+l_0 = (1,1,1,1)  # starting condition of cows
 minGrass  = 150  # minimum units of grass before a penalty is applied 
 PGood     = 0.5  # probability of having good weather in the region
 dryFeed   = 3    # reduction in weekly feed per dry cow
@@ -34,7 +35,6 @@ dryable   = 1    # number of cows that can be dried per week
 def penalty_grass(x):
     x -= minGrass
     return 0 if x >= 0 else abs(x)
-
 
 """ returns the units of grass required to feed the herd each week """
 def dryenergy(t, l=(1,1,1,1)):
@@ -81,30 +81,29 @@ def revenue(t,s,l):
                                     
             # calculate the maximum amount of profit given the penalty for each unit under 150 
             if sum(l) == 0:
-                _revenue[t,s,l] = (PGood     * (-L*penalty_grass(available_good)) +
-                                   (1-PGood) * (-L*penalty_grass(available_poor)), (0,sum(l)))
+                _revenue[t,s,l] = (PGood * (-L*penalty_grass(available_good))
+                    + (1-PGood) * (-L*penalty_grass(available_poor)), (0, l))
             else:
-                _revenue[t,s,l] = max((PGood     * (P*a - L*penalty_grass(available_good-a)) +
-                                       (1-PGood) * (P*a - L*penalty_grass(available_poor-a)), (a,sum(l)))
-                                      for a in range(min(maxUnits+1, available+1)))
+                _revenue[t,s,l] = max((PGood * (P*a - L*penalty_grass(available_good-a))
+                    + (1-PGood) * (P*a - L*penalty_grass(available_poor-a)), (a, l))
+                for a in range(min(maxUnits+1, available+1)))
         else:
-            _revenue[t,s,l] = max((PGood     * (P*a + revenue(t+1, available_good-a, l)[0]) +
-                           (1-PGood) * (P*a + revenue(t+1, available_poor-a, l)[0]),
-                           (a,sum(l))) for a in range(min(maxUnits+1, available+1)))
+            _revenue[t,s,l] = max((PGood * (P*a + revenue(t+1, available_good-a, l)[0])
+                + (1-PGood) * (P*a + revenue(t+1, available_poor-a, l)[0]),
+                (a, l)) for a in range(min(maxUnits+1, available+1)))
+
             # add the option of drying a cow that's not yet dried
-            ori_l = l
+            dried = {}
             for i in C:
-                if ori_l[i]:
-                    l = list(ori_l)
-                    l[i] = 0
-                    l = tuple(l)
-                    _revenue[t,s,l] = max((PGood     * (P*a + revenue(t+1, available_good-a, l)[0]) +
-                               (1-PGood) * (P*a + revenue(t+1, available_poor-a, l)[0]),
-                               (a,sum(l))) for a in range(min(maxUnits+1, available+1)))
-                    # _revenue[t,s,ori_l] = max(dried, _revenue[t,s,ori_l])
+                if l[i]:
+                new_l = list(l)
+                new_l[i] = 0
+                new_l = tuple(new_l)
+                dried[l] = max((PGood * (P*a + revenue(t+1, available_good-a, new_l)[0])
+                    + (1-PGood) * (P*a + revenue(t+1, available_poor-a, new_l)[0]),
+                    (a, new_l)) for a in range(min(maxUnits+1, available+1)))
 
-
-
+            _revenue[t,s,l] = max(max(dried.values()), _revenue[t,s,l])
 
     return _revenue[t,s,l]
 
@@ -118,5 +117,5 @@ def get_feed_amounts():
 
     print(feed_amounts)
 
-print(f"Total revenue from milk sold: {round(revenue(0, s_0, (1,1,1,1))[0], 3)}")
+print(f"Total revenue from milk sold: {round(revenue(0, s_0, l_0)[0], 3)}")
 #get_feed_amounts()

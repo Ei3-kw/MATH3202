@@ -85,7 +85,7 @@ def revenue(t,s,l):
             # add the option of drying a cow
             dryCows = max((PGood     * (P*a + revenue(t+1, pasture(s,'Good')-dryenergy(t,dry(l,b))-a, dry(l,b))[0]) +
                            (1-PGood) * (P*a + revenue(t+1, pasture(s,'Poor')-dryenergy(t,dry(l,b))-a, dry(l,b))[0]),
-                           (a,dry(l,b))) for a in range(min(maxUnits+1, available+1)) for b in range(4))
+                           (a,dry(l,b))) for a in range(min(maxUnits+1, available+1)) for b in C if l[b])
 
             notDryCows = max((PGood     * (P*a + revenue(t+1, pasture(s,'Good')-dryenergy(t,l)-a, l)[0]) +
                               (1-PGood) * (P*a + revenue(t+1, pasture(s,'Poor')-dryenergy(t,l)-a, l)[0]),
