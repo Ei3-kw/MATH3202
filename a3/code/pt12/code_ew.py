@@ -48,7 +48,7 @@ def max_revenue(t, grass, remaining):
 
         # Cows can’t eat more than the amount of existing grass
         if feed > grass or remaining < 0:
-            continue
+            break
 
         # total = this wk + future - penalty
         total_rev = (feed - r) * P \

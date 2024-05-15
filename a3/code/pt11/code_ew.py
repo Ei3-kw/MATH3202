@@ -1,4 +1,3 @@
-from typing import Tuple
 from functools import lru_cache
 
 # Sets
@@ -37,7 +36,7 @@ def max_revenue(t, grass):
     for feed in range(r, r+41):
         # Cows can’t eat more than the amount of existing grass
         if feed > grass:
-            continue
+            break
 
         # total = this wk + furture
         total_rev = (feed - r) * P \
