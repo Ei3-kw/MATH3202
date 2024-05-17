@@ -51,16 +51,20 @@ def revenue(t,s):
 def get_feed_amounts():
     """ determine the number of units of feed given to the herd each week """
     feed_amounts = [0] * W
+    extra_feed = [0] * W
+    required_feed = [0] * W
     s = s_0
     total = 0
 
     for t in range(W):
         feed_amounts[t] = revenue(t,s)[1] + required(t)
+        extra_feed[t] = revenue(t,s)[1]
+        required_feed[t] = required(t)
         total += P * revenue(t,s)[1]
         s = pasture(s) - revenue(t,s)[1] - required(t)
     
     print(f"Total revenue calculated using feed amounts: {round(total, 3)}")
-    print(f"\nBREAKDOWN BY WEEK:")
+    print(f"\nTOTAL FEED PER WEEK:")
     print(f"{'-'*65}\n| {'Week':<6} {'Feed':<6} | {'Week':<6} {'Feed':<6} | ", end='')
     print(f"{'Week':<6} {'Feed':<6} | {'Week':<6} {'Feed':<6} |\n|{'-'*63}|")
     for n in range(13):
@@ -68,11 +72,19 @@ def get_feed_amounts():
         print(f"{26+n:<6} {feed_amounts[26+n]:<6} | {39+n:<6} {feed_amounts[39+n]:<6} |")
     print(f"{'-'*65}\n")
 
-    return feed_amounts
+    print(f"\nEXTRA FEED GIVEN FOR PROFIT:")
+    print(f"{'-'*65}\n| {'Week':<6} {'Feed':<6} | {'Week':<6} {'Feed':<6} | ", end='')
+    print(f"{'Week':<6} {'Feed':<6} | {'Week':<6} {'Feed':<6} |\n|{'-'*63}|")
+    for n in range(13):
+        print(f"| {n:<6} {extra_feed[n]:<6} | {13+n:<6} {extra_feed[13+n]:<6} | ", end='')
+        print(f"{26+n:<6} {extra_feed[26+n]:<6} | {39+n:<6} {extra_feed[39+n]:<6} |")
+    print(f"{'-'*65}\n")
+
+    return feed_amounts, extra_feed, required_feed
 
 print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0, s_0)[0], 3)}")
-feed = get_feed_amounts()
+feed, extra, req = get_feed_amounts()
 
 # edit settings 
 plt.figure(facecolor = '#008080') 
@@ -88,6 +100,7 @@ ax.spines['bottom'].set_color('white')
 ax.spines['left'].set_color('white')
 ax.spines['top'].set_color('#008080')
 ax.spines['right'].set_color('#008080')
+ax.yaxis.grid = True
 
 # plot the optimal feed strategy 
 x = arange(0,52)
@@ -99,3 +112,32 @@ plt.ylabel ('Feed')
 plt.tight_layout()
 
 plt.show()
+
+# edit settings 
+plt.figure(facecolor = 'black') 
+plt.rcParams['axes.facecolor'] = 'black'
+plt.rcParams.update({'text.color'       : 'white',
+                     'axes.labelcolor'  : 'white',
+                     'xtick.color'      : 'white',
+                     'ytick.color'      : 'white'
+                     })
+
+ax = plt.gca()
+ax.spines['bottom'].set_color('white')
+ax.spines['left'].set_color('white')
+ax.spines['top'].set_color('black')
+ax.spines['right'].set_color('black')
+
+# plot a breakdown of the optimal feed strategy 
+x = arange(0,52)
+plt.xticks(arange(min(x), max(x), 2.0))
+plt.plot(x, extra, color='#00A08F', label='extra')
+plt.plot(x, feed, color='#124653', label='total')
+plt.plot(x, req, color='#FEE074', label='required')
+plt.xlabel ('Week')
+plt.ylabel ('Feed')
+plt.tight_layout()
+plt.legend(loc='best')
+
+plt.show()
+
