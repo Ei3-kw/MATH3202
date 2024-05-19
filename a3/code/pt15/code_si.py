@@ -111,8 +111,7 @@ l = l_0
 for t in range(52):
     for p in range(0, 300):
         rev = revenue(t, p, l)
-        if rev[1][0] == maxUnitsCow * sum(l):
-            print(f"Week {t} | Pasture {p} | Cows {l}")
+        if rev[1][0] != 'Infeasible' and rev[1][0] == maxUnitsCow * sum(l):
             feed_dict[t] = tuple((p, l))
             if rev[1][1] != "Infeasible" and sum(rev[1][1]) < sum(l):
                 for i in range(4):
@@ -125,7 +124,7 @@ print(f"\nREQUIRED PASTURE FOR OPTIMAL STRATEGY:")
 print(f"{'-'*113}\n| {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | ", end='')
 print(f"{'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} |\n|{'-'*111}|")
 
-# print optimal feed each week and number of dried cows
+# print initial pasture each week and number of dried cows
 for t in range(13):
     for i in range(4):
         l = feed_dict[t+13*i][1]

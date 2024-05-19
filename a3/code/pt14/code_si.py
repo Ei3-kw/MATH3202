@@ -83,15 +83,14 @@ def revenue(t,s,d):
 print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0, s_0, 0)[0], 3)}")
 
-# determine the units of grass required at the beginning of week t so that 40 additional 
-# units can be given
+# determine the units of grass required at the beginning of week t so that 40 additional units can be given
 feed_dict = {}
 dryCows = 0
 total_profit = 0
 for t in range(52):
     for p in range(0, 300):
         rev = revenue(t, p, dryCows)
-        if rev[1][0] == maxUnitsCow * (4-dryCows):
+        if rev[1][0] != 'Infeasible' and rev[1][0] == maxUnitsCow * (4-dryCows):
             total_profit += rev[1][0] * 4.2
             feed_dict[t] = tuple((p, dryCows))
             if rev[1][1] != "Infeasible" and rev[1][1] > dryCows:
@@ -102,7 +101,7 @@ print(f"\nREQUIRED PASTURE FOR OPTIMAL STRATEGY:")
 print(f"{'-'*113}\n| {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | ", end='')
 print(f"{'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} |\n|{'-'*111}|")
 
-# print optimal feed each week and number of dried cows
+# print required units of grass each week and number of dried cows
 for t in range(13):
     for i in range(4):
         if i == 3:
@@ -163,6 +162,6 @@ plt.xticks(arange(0, 52, 2.0))
 plt.legend(loc='best')
 
 plt.xlabel ('Week')
-plt.ylabel ('Feed')
+plt.ylabel ('Initial Units of Grass')
 
 plt.show()
