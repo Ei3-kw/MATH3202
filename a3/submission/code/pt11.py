@@ -87,22 +87,8 @@ print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0, s_0)[0], 3)}")
 feed, extra, req = get_feed_amounts()
 
-total_feed = 0
-total_feed_end = 0
-week_count = 0
-week_count_end = 0
-for t in range(W):
-    if feed[t] > 40 and feed[t] <= 50:
-        week_count += 1
-        total_feed += feed[t]
-    if feed[t] > 50:
-        week_count_end += 1
-        total_feed_end += feed[t]
-
-print(f"Average weekly feed in the middle of the year ({week_count} weeks): {round(total_feed / week_count, 2)}")
-print(f"Average weekly feed at the end of the year ({week_count_end} weeks): {round(total_feed_end / week_count_end, 2)}")
-
-# edit settings 
+## GRAPHING 
+# plot the total feed given to the herd in the optimal solution
 plt.figure(facecolor = '#008080') 
 plt.rcParams['axes.facecolor'] = '#008080'
 plt.rcParams.update({'text.color'       : 'white',
@@ -118,7 +104,6 @@ ax.spines['top'].set_color('#008080')
 ax.spines['right'].set_color('#008080')
 ax.yaxis.grid = True
 
-# plot the optimal feed strategy 
 x = arange(0,52)
 y = array(feed)
 plt.xticks(arange(min(x), max(x), 2.0))
@@ -126,10 +111,9 @@ plt.bar(x, y, color='white')
 plt.xlabel ('Week')
 plt.ylabel ('Feed')
 plt.tight_layout()
-
 plt.show()
 
-# edit settings 
+# plot a comparison of total, extra and required feed
 plt.figure(facecolor = 'black') 
 plt.rcParams['axes.facecolor'] = 'black'
 plt.rcParams.update({'text.color'       : 'white',
@@ -144,7 +128,6 @@ ax.spines['left'].set_color('white')
 ax.spines['top'].set_color('black')
 ax.spines['right'].set_color('black')
 
-# plot a breakdown of the optimal feed strategy 
 x = arange(0,52)
 plt.xticks(arange(min(x), max(x), 2.0))
 plt.plot(x, extra, color='#00A08F', label='extra')
@@ -154,6 +137,5 @@ plt.xlabel ('Week')
 plt.ylabel ('Feed')
 plt.tight_layout()
 plt.legend(loc='best')
-
 plt.show()
 

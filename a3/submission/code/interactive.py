@@ -6,7 +6,7 @@ l_0 = (1,1,1,1)         # starting condition of cows
 while 1:
     while 1:
         try:
-            comm = int(input("Which communication (13, 14 or 15)?"))
+            comm = int(input("Which communication (13, 14 or 15)? "))
             if comm not in [13, 14, 15]:
                 continue
             print(f"retrieving data from communication{comm} ...")
@@ -23,7 +23,7 @@ while 1:
             # week
             while 1:
                 try:
-                    t = int(input("Which week are you in (0~51)?"))
+                    t = int(input("Which week are you in (0~51)? "))
                     if t not in range(52):
                         print("Invalid, please enter integer 0~51")
                         continue
@@ -34,7 +34,7 @@ while 1:
             # grass
             while 1:
                 try:
-                    s = int(input("How much grass is there on the field?"))
+                    s = int(input("How much grass is there on the field? "))
                     if s < pt13.required(t):
                         print("Insufficient pasture. Enjoy the steak!!")
                     break
@@ -44,21 +44,21 @@ while 1:
 
             if (t,s) in pt13._revenue:
                 print(f"feed the herd {pt13.required(t)+pt13._revenue[t, s][1]} units of grass")
-                print(f"Keep following the strategy, the expected revenue would be {pt13._revenue[t, s][0]}")
+                print(f"Keep following the strategy, the expected revenue would be ${round(pt13._revenue[t, s][0],2)}")
             else:
                 print("Such situation should not occur based on given information.")
 
-            if input("Do you wish to check another week, pasture combination for communication 13? (Y/N)") not in "Yy":
+            if input("Do you wish to check another week, pasture combination for communication 13? (Y/N) ") not in "Yy":
                 break
 
-    if comm == 14:
+    elif comm == 14:
         pt14.revenue(0, s_0, 0)
 
         while 1:
             # week
             while 1:
                 try:
-                    t = int(input("Which week are you in (0~51)?"))
+                    t = int(input("Which week are you in (0~51)? "))
                     if t not in range(52):
                         print("Invalid, please enter integer 0~51")
                         continue
@@ -70,7 +70,7 @@ while 1:
             # number of dried cows
             while 1:
                 try:
-                    d = int(input("How many cows have been dried (0~4)?"))
+                    d = int(input("How many cows have been dried (0~4)? "))
                     if d not in range(5):
                         print("Invalid, please enter an integer (0~4)")
                         continue
@@ -82,7 +82,7 @@ while 1:
             # grass
             while 1:
                 try:
-                    s = int(input("How much grass is there on the field?"))
+                    s = int(input("How much grass is there on the field? "))
                     if s < pt14.required(t) - d * pt14.dryFeed:
                         print("Insufficient pasture. Enjoy the steak!!")
                     break
@@ -93,11 +93,11 @@ while 1:
             if (t,s,d) in pt14._revenue:
                 print(f"feed the herd {pt14.required(t)+pt14._revenue[t, s, d][1][0]} units of grass")
                 print(f"additionally, dry {pt14._revenue[t, s, d][1][1]-d} cow")
-                print(f"Keep following the strategy, the expected revenue would be {pt14._revenue[t, s, d][0]}")
+                print(f"Keep following the strategy, the expected revenue would be ${round(pt14._revenue[t, s, d][0],2)}")
             else:
                 print("Such situation should not occur based on given information.")
 
-            if input("Do you wish to check another combination for communication 14? (Y/N)") not in "Yy":
+            if input("Do you wish to check another combination for communication 14? (Y/N) ") not in "Yy":
                 break
 
     else:
@@ -108,7 +108,7 @@ while 1:
             # week
             while 1:
                 try:
-                    t = int(input("Which week are you in (0~51)?"))
+                    t = int(input("Which week are you in (0~51)? "))
                     if t not in range(52):
                         print("Invalid, please enter integer 0~51")
                         continue
@@ -121,7 +121,7 @@ while 1:
 
             # Lily
             while 1:
-                d = input("Is Betty dried? (Y/N)")
+                d = input("Is Lily dried? (Y/N) ")
                 if d not in "YyNn":
                     print("Invalid, please enter (Y/N)")
                     continue
@@ -133,7 +133,7 @@ while 1:
 
             # Betty
             while 1:
-                d = input("Is Betty dried? (Y/N)")
+                d = input("Is Betty dried? (Y/N) ")
                 if d not in "YyNn":
                     print("Invalid, please enter (Y/N)")
                     continue
@@ -145,7 +145,7 @@ while 1:
 
             # Clover
             while 1:
-                d = input("Is Betty dried? (Y/N)")
+                d = input("Is Clover dried? (Y/N) ")
                 if d not in "YyNn":
                     print("Invalid, please enter (Y/N)")
                     continue
@@ -157,7 +157,7 @@ while 1:
 
              # Rosie
             while 1:
-                d = input("Is Betty dried? (Y/N)")
+                d = input("Is Rosie dried? (Y/N) ")
                 if d not in "YyNn":
                     print("Invalid, please enter (Y/N)")
                     continue
@@ -172,7 +172,7 @@ while 1:
             # grass
             while 1:
                 try:
-                    s = int(input("How much grass is there on the field?"))
+                    s = int(input("How much grass is there on the field? "))
                     if s < pt15.dryenergy(t, l):
                         print("Insufficient pasture. Enjoy the steak!!")
                     break
@@ -185,13 +185,13 @@ while 1:
                 for i in range(4):
                     if l[i] != pt15._revenue[t, s, l][1][1][i]:
                         print(f"additionally, dry {pt15.names[i]}")
-                print(f"Keep following the strategy, the expected revenue would be {pt15._revenue[t, s, l][0]}")
+                print(f"Keep following the strategy, the expected revenue would be ${round(pt15._revenue[t, s, l][0],2)}")
             else:
                 print("Such situation should not occur based on given information.")
 
-            if input("Do you wish to check another combination for communication 15? (Y/N)") not in "Yy":
+            if input("Do you wish to check another combination for communication 15? (Y/N) ") not in "Yy":
                 break
 
-    if input("Do you wish to quit (Y/N)?") in "Yy":
+    if input("Do you wish to quit (Y/N)? ") in "Yy":
         break
 
