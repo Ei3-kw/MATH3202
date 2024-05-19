@@ -70,8 +70,7 @@ if __name__ == '__main__':
     print(f"\nTOTALS:\n{'-'*69}")
     print(f"Total revenue from milk sold: {round(revenue(0,s_0)[0], 2)}\n")
 
-    # determine the units of grass required at the beginning of week t so that 40 additional
-    # units can be given
+    # determine initial units of grass required in week t so that 40 additional units can be given
     feed_dict = {}
     for t in range(W):
         for p in range(0, 300):
@@ -93,17 +92,8 @@ if __name__ == '__main__':
                 print(f"{feed_dict[t+13*i]:<6}  ", end='')
     print(f"{'-'*69}\n")
 
-    # store the required feed each week in a list
-    req = []
-    for t in range(52):
-        req.append(required(t))
 
-    # sort the dictionary of feed amounts by week before plotting
-    feed = []
-    for x in range(52):
-        feed.append(feed_dict[x])
-
-    # edit settings
+    # GRAPHING
     plt.figure(facecolor = 'black')
     plt.rcParams['axes.facecolor'] = 'black'
     plt.rcParams.update({'text.color'       : 'white',
@@ -113,7 +103,11 @@ if __name__ == '__main__':
                          'axes.grid' : True, 'grid.color' : '#161616'
                          })
 
-    # plot the optimal feed strategy
+    # plot the weekly initial grass units in an optimal strategy
+    feed = []
+    for x in range(52):
+        feed.append(feed_dict[x])
+
     x = arange(0,52)
     y = array(feed)
     plt.subplot(2, 1, 1)
@@ -124,7 +118,11 @@ if __name__ == '__main__':
     plt.ylabel ('Initial Units of Grass')
     plt.tight_layout()
 
-    # plot required feed per week
+    # plot required feed each week
+    req = []
+    for t in range(52):
+        req.append(required(t))
+
     x = arange(0,52)
     y = array(req)
     plt.subplot(2, 1, 2)

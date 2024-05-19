@@ -100,6 +100,7 @@ def revenue(t,s,l):
 
 
 if __name__ == '__main__':
+    print(f"\nTOTALS:\n{'-'*65}")
     print(f"Total revenue from milk sold: {round(revenue(0, s_0, l_0)[0], 2)}")
 
     feed_dict = {}
@@ -110,9 +111,6 @@ if __name__ == '__main__':
             if rev[1][0] != 'Infeasible' and rev[1][0] == maxMilkUnits * sum(l):
                 feed_dict[t] = tuple((p, l))
                 if rev[1][1] != "Infeasible" and sum(rev[1][1]) < sum(l):
-                    for i in range(4):
-                        if rev[1][1][i] < l[i]:
-                            print(names[i])
                     l = rev[1][1]
                 break
 
@@ -120,7 +118,7 @@ if __name__ == '__main__':
     print(f"{'-'*113}\n| {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | ", end='')
     print(f"{'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} |\n|{'-'*111}|")
 
-    # print initial pasture each week and number of dried cows
+    # print required initial units of grass each week and number of dried cows
     for t in range(13):
         for i in range(4):
             l = feed_dict[t+13*i][1]
@@ -134,6 +132,7 @@ if __name__ == '__main__':
                 print(f"| {t+13*i:<6} {feed_dict[t+13*i][0]:<9} {dry_cows:<8} ", end='')
     print(f"{'-'*113}\n")
 
+    # GRAPHING
     feed0, feed1, feed2, feed3, feed4 = ([] for i in range(5))
     x0, x1, x2, x3, x4 = ([] for i in range(5))
     for t in range(52):
@@ -176,7 +175,6 @@ if __name__ == '__main__':
                          'axes.grid' : True, 'grid.color' : '#161616'
                          })
 
-    # plot the optimal feed strategy
     plt.plot(array(x0), array(feed0), color='#00A08F', label='dry cows = 0')
     plt.plot(array(x1), array(feed1), color='#124653', label='dry cows = 1')
     plt.plot(array(x2), array(feed2), color='#FEE074', label='dry cows = 2')
@@ -184,7 +182,6 @@ if __name__ == '__main__':
     plt.plot(array(x4), array(feed4), color='#D5D5D8', label='dry cows = 4')
     plt.xticks(arange(0, 52, 2.0))
     plt.legend(loc='best')
-
     plt.xlabel ('Week')
     plt.ylabel ('Initial Units of Grass')
 
