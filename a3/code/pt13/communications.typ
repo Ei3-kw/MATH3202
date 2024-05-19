@@ -92,7 +92,7 @@ Incorporating the uncertainty in the weather, how much should the farmer feed hi
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-$ forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity $
+$ forall 0 <= t <= 51," "S_t <= R_t -> V_t (S_t) = -infinity $
 $ V_51 = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51) + (1 - P_"good") times (G (S_51, "bad") - a - R_51))," "forall a in A_51)) $
 \
 == General Case

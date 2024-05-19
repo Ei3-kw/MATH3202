@@ -111,8 +111,8 @@ Taking into account the individual differences between the four cows, how much s
 - $L$ - penalty cost per unit under 150 (\$) $= 5$
 - $P_"good"$ - probability of having good weather in the region $= 0.5$
 - $R_t (l_t)$ - units of grass required to feed the herd in week $t$ given lactating tuple $l_t$
-- $l_0 = \(1, 1, 1, 1\)$
-
+- $l_0 = (1, 1, 1, 1)$
+- $l_"dried" = (0, 0, 0, 0)$
 
 \
 == Stages
@@ -127,16 +127,16 @@ Taking into account the individual differences between the four cows, how much s
 - $D_c$                        - dry cow c if c is still lactating
 \
 == Value Function
-$ V_t (S_t, l) = "maximum expected income if we start week" t "with" S_t "pasture" $
+$ V_t (S_t, l_t) = "maximum expected income if we start week" t "with" S_t "pasture and lactating pattern" l_t $
 \
 == Base Case
 - $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
-- $V_51 (S_51, (0, 0, 0, 0)) = -L times (P_"good" times (G (S_51, "good") - R_51 ((0,0,0,0))) + (1 - P_"good") times (G (S_51, "bad")) - R_51 ((0,0,0,0)))$
-- $V_51 (S_51, d) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 + d times "DRF") + (1 - P_"good") times (G (S_51, "bad") - a - R_51 + d times "DRF"))," "forall a in A_51))$
+- $V_51 (S_51, l_"dried") = -L times (P_"good" times (G (S_51, "good") - R_51 (l_"dried")) + (1 - P_"good") times (G (S_51, "bad")) - R_51 (l_"dried"))$
+- $V_51 (S_51, l_51) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 (l_51)) + (1 - P_"good") times (G (S_51, "bad") - a - R_51 (l_51)))," "forall a in A_51))$
 \
 == General Case
-- $V_t (S_t, 4) = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - 4 times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - 4 times "DRF")$
-- $V_t (S_t, d) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - d times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - d times "DRF")," "forall a in A_t)$
+- $V_t (S_t, l_"dried") = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t (l_"dried")," "l_"dried") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t (l_"dried")," "l_"dried")$
+- $V_t (S_t, l_t) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t (l_t), l_(t+1)) + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t (l_t), l_(t+1))," "forall a in A_t," "forall l_(t+1) in {l_t, l_t "with one of the 1s changed to a 0"})$
 
 
 

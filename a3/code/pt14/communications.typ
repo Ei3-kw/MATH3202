@@ -103,13 +103,13 @@ Allowing for the option of dry-off, how much should the farmer feed his herd eac
 $ V_t (S_t, d) = "maximum expected income if we start week" t "with" S_t "pasture and " d "cows dried" $
 \
 == Base Case
-- $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
-- $V_51 (S_51, 4) = -L times (P_"good" times (G (S_t, "good") - R_51 + 4 times "DRF") + (1 - P_"good") times (G (S_51, "bad")) - R_51 + 4 times "DRF")$
+- $forall 0 <= t <= 51," "S_t <= R_t - d times "DRF" -> V_t (S_t, d) = -infinity$
+- $V_51 (S_51, 4) = -L times (P_"good" times (G (S_51, "good") - R_51 + 4 times "DRF") + (1 - P_"good") times (G (S_51, "bad")) - R_51 + 4 times "DRF")$
 - $V_51 (S_51, d) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 + d times "DRF") + (1 - P_"good") times (G (S_51, "bad") - a - R_51 + d times "DRF"))," "forall a in A_51))$
 \
 == General Case
 - $V_t (S_t, 4) = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - 4 times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - 4 times "DRF")$
-- $V_t (S_t, d) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - d times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - d times "DRF")," "forall a in A_t)$
+- $V_t (S_t, d) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - d times "DRF", d') + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - d times "DRF", d')," "forall a in A_t," "forall d' in {d, d+1})$
 
 
 

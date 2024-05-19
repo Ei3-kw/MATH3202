@@ -77,7 +77,7 @@ Taking this into account, how much should the farmer feed his herd each week dur
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-- $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
+- $forall 0 <= t <= 51," "S_t <= R_t -> V_t (S_t) = -infinity$
 - $V_51 = max(a times P - L times (G (S_51) - a - R_51)," "forall a in A_51))$
 \
 == General Case

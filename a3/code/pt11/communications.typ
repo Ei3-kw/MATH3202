@@ -88,7 +88,7 @@ How much should the farmer feed his herd each week during the season? Please pro
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-- $V_t (S_t) = 0," "forall 0 <= t <= 51" "s.t." "S_t <= R_t$
+- $forall 0 <= t <= 51," "S_t <= R_t -> V_t (S_t) = -infinity$
 - $V_51 = max(a times P," "forall a in A_51)$
 \
 == General Case
