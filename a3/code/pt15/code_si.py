@@ -70,7 +70,7 @@ def revenue(t,s,l):
         # determine the available grass units once the herd has been fed
         available = s - dryenergy(t,l)
         
-        if t == 51 or d == 0:
+        if t == 51:
             
             # determine how much grass is available at the end of the week for each weather scenario
             available_good = pasture(s,'Good') - dryenergy(t,l)
@@ -83,6 +83,12 @@ def revenue(t,s,l):
                 _revenue[t,s,l] = max((PGood * (P*a - L*penalty_grass(available_good-a)) 
                                        + (1-PGood) * (P*a - L*penalty_grass(available_poor-a)), (a, l)) 
                                       for a in range(min(maxUnits+1, available+1)))
+
+        elif d == 0:
+            # no profit can be made if all cows are dry so there are no actions to consider
+            _revenue[t,s,l] = (PGood * revenue(t+1, pasture(s,'Good')-dryenergy(t,l), l)[0] 
+                               + (1-PGood) * revenue(t+1, pasture(s,'Poor')-dryenergy(t,l), l)[0], (0,l))
+
         else:
             # determine maximum profit if a cow is dried
             dryCows = max((PGood * (P*a + revenue(t+1, pasture(s,'Good')-dryenergy(t,l)-a, dry(l,b))[0]) 
@@ -103,11 +109,9 @@ print(f"Total revenue from milk sold: {round(revenue(0, s_0, l_0)[0], 2)}")
 feed_dict = {}
 l = l_0
 for t in range(52):
-    count = 0
     for p in range(0, 300):
         rev = revenue(t, p, l)
-        if rev[1][0] == maxUnitsCow * sum(l) or count > 0:
-            count += 1
+        if rev[1][0] == maxUnitsCow * sum(l):
             print(f"Week {t} | Pasture {p} | Cows {l}")
             feed_dict[t] = tuple((p, l))
             if rev[1][1] != "Infeasible" and sum(rev[1][1]) < sum(l):
@@ -115,29 +119,25 @@ for t in range(52):
                     if rev[1][1][i] < l[i]:
                         print(names[i])
                 l = rev[1][1]
-            if count == 10:
-                break 
+            break
 
-feed_dict = {}
-l = l_0
-for t in range(52):
-    count = 0
-    for p in range(0, 300):
-        rev = revenue(t, p, l)
-        if rev[1][0] > 0 or count > 0:
-            count += 1
-            print(f"Week {t} | Pasture {p} | Cows {l}")
-            feed_dict[t] = tuple((p, l))
-            if rev[1][1] != "Infeasible" and sum(rev[1][1]) < sum(l):
-                for i in range(4):
-                    if rev[1][1][i] < l[i]:
-                        print(names[i])
-                l = rev[1][1]
-            if count == 10:
-                break 
+print(f"\nREQUIRED PASTURE FOR OPTIMAL STRATEGY:")
+print(f"{'-'*113}\n| {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | ", end='')
+print(f"{'Week':<6} {'Pasture':<9} {'Dry Cows':<8} | {'Week':<6} {'Pasture':<9} {'Dry Cows':<8} |\n|{'-'*111}|")
 
-
-print(feed_dict)
+# print optimal feed each week and number of dried cows
+for t in range(13):
+    for i in range(4):
+        l = feed_dict[t+13*i][1]
+        dry_cows = ''
+        for j in range(4):
+            if l[j] == 0:
+                dry_cows = dry_cows + names[j][0] + ' '
+        if i == 3:
+            print(f"| {t+13*i:<6} {feed_dict[t+13*i][0]:<9} {dry_cows:<8} |")
+        else:
+            print(f"| {t+13*i:<6} {feed_dict[t+13*i][0]:<9} {dry_cows:<8} ", end='')
+print(f"{'-'*113}\n")
 
 feed0, feed1, feed2, feed3, feed4 = ([] for i in range(5))
 x0, x1, x2, x3, x4 = ([] for i in range(5))
@@ -164,17 +164,13 @@ for t in range(52):
             x2.append(t)
         feed3.append(x[0])
         x3.append(t)
-    elif sum(x[1]) == 1:
+    elif sum(x[1]) == 0:
         if len(x4) == 0:
             feed3.append(x[0])
             x3.append(t)
         feed4.append(x[0])
         x4.append(t)
     t += 1
-
-
-
-
 
 plt.figure(facecolor = 'black') 
 plt.rcParams['axes.facecolor'] = 'black'
@@ -195,6 +191,6 @@ plt.xticks(arange(0, 52, 2.0))
 plt.legend(loc='best')
 
 plt.xlabel ('Week')
-plt.ylabel ('Feed')
+plt.ylabel ('Initial Units of Grass')
 
 plt.show()

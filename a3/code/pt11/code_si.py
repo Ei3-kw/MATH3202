@@ -86,6 +86,21 @@ print(f"\nTOTALS:\n{'-'*65}")
 print(f"Total revenue from milk sold: {round(revenue(0, s_0)[0], 3)}")
 feed, extra, req = get_feed_amounts()
 
+total_feed = 0
+total_feed_end = 0
+week_count = 0
+week_count_end = 0
+for t in range(W):
+    if feed[t] > 40 and feed[t] <= 50:
+        week_count += 1
+        total_feed += feed[t]
+    if feed[t] > 50:
+        week_count_end += 1
+        total_feed_end += feed[t]
+
+print(f"Average weekly feed in the middle of the year ({week_count} weeks): {round(total_feed / week_count, 2)}")
+print(f"Average weekly feed at the end of the year ({week_count_end} weeks): {round(total_feed_end / week_count_end, 2)}")
+
 # edit settings 
 plt.figure(facecolor = '#008080') 
 plt.rcParams['axes.facecolor'] = '#008080'

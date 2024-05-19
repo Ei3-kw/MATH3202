@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from numpy import arange, array
-import math 
 
 # SETS
 cows = ['Lily', 'Betty', 'Clover', 'Rosie']
@@ -59,16 +58,21 @@ def revenue(t,s,d):
         available_good = pasture(s,'Good') - required(t) + dryFeed*d
         available_poor = pasture(s,'Poor') - required(t) + dryFeed*d
 
-        if t == 51 or d == 4:
+        if t == 51:
                                     
             # calculate the maximum amount of profit given the penalty for each unit under 150 
             if d == 4:
-                _revenue[t,s,d] = (PGood     * (-L*penalty_grass(available_good)) + 
-                                   (1-PGood) * (-L*penalty_grass(available_poor)), (0, d))
+                _revenue[t,s,d] = (PGood * (-L*penalty_grass(available_good)) 
+                                   + (1-PGood) * (-L*penalty_grass(available_poor)), (0, d))
             else:
-                _revenue[t,s,d] = max((PGood     * (P*a - L*penalty_grass(available_good-a)) 
+                _revenue[t,s,d] = max((PGood * (P*a - L*penalty_grass(available_good-a)) 
                                        + (1-PGood) * (P*a - L*penalty_grass(available_poor-a)), (a, d)) 
                                       for a in range(min(maxUnits+1, available+1)))
+
+        elif d == 4:
+            # no profit can be made if all cows are dry so there are no actions to consider
+            _revenue[t,s,d] = (PGood * revenue(t+1, available_good, d)[0] + (1-PGood) * revenue(t+1, available_poor, d)[0], (0, d))
+
         else:
             _revenue[t,s,d] = max((PGood * (P*a + revenue(t+1, available_good-a, d+b)[0]) 
                                    + (1-PGood) * (P*a + revenue(t+1, available_poor-a, d+b)[0]), (a, d+b)) 
@@ -83,10 +87,12 @@ print(f"Total revenue from milk sold: {round(revenue(0, s_0, 0)[0], 3)}")
 # units can be given
 feed_dict = {}
 dryCows = 0
+total_profit = 0
 for t in range(52):
     for p in range(0, 300):
         rev = revenue(t, p, dryCows)
         if rev[1][0] == maxUnitsCow * (4-dryCows):
+            total_profit += rev[1][0] * 4.2
             feed_dict[t] = tuple((p, dryCows))
             if rev[1][1] != "Infeasible" and rev[1][1] > dryCows:
                 dryCows += 1
@@ -103,7 +109,6 @@ for t in range(13):
             print(f"| {t+13*i:<6} {feed_dict[t+13*i][0]:<9} {feed_dict[t+13*i][1]:<8} |")
         else:
             print(f"| {t+13*i:<6} {feed_dict[t+13*i][0]:<9} {feed_dict[t+13*i][1]:<8} ", end='')
-
 print(f"{'-'*113}\n")
 
 feed0, feed1, feed2, feed3, feed4 = ([] for i in range(5))

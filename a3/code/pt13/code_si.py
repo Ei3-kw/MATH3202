@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 from numpy import arange, array
-import collections
-import math 
 
 # SETS
 cows = ['Lily', 'Betty', 'Clover', 'Rosie']
@@ -70,25 +68,27 @@ def revenue(t,s):
 print(f"\nTOTALS:\n{'-'*69}")
 print(f"Total revenue from milk sold: {round(revenue(0,s_0)[0], 2)}\n")
 
-print(f"\nREQUIRED PASTURE FOR OPTIMAL STRATEGY:")
-print(f"{'-'*69}\n| {'Week':<6} {'Pasture':<6} | {'Week':<6} {'Pasture':<6} | ", end='')
-print(f"{'Week':<6} {'Pasture':<6} | {'Week':<6} {'Pasture':<6} |\n|{'-'*67}|")
-
 # determine the units of grass required at the beginning of week t so that 40 additional 
 # units can be given
 feed_dict = {}
+for t in range(W):
+    for p in range(0, 300):
+        rev = revenue(t, p)
+
+        if rev[1] != "Infeasible" and rev[1] >= 30:
+            feed_dict[t] = p
+            break 
+
+print(f"\nREQUIRED PASTURE FOR OPTIMAL STRATEGY:")
+print(f"{'-'*69}\n| {'Week':<6} {'Pasture':<6} | {'Week':<6} {'Pasture':<6} | ", end='')
+print(f"{'Week':<6} {'Pasture':<6} | {'Week':<6} {'Pasture':<6} |\n|{'-'*67}|")
 for t in range(13):
     for i in range(4):
         print(f"| {t+13*i:<6} ", end='')
-        for j in range(0, 300):
-            rev = revenue(t+13*i, j)
-            if rev[1] == 40:
-                feed_dict[t+13*i] = j
-                if i == 3:
-                    print(f"{j:<6}  |")
-                else:
-                    print(f"{j:<6}  ", end='')
-                break 
+        if i == 3:
+            print(f"{feed_dict[t+13*i]:<6}  |")
+        else:
+            print(f"{feed_dict[t+13*i]:<6}  ", end='')
 print(f"{'-'*69}\n")
 
 # store the required feed each week in a list 
@@ -97,10 +97,9 @@ for t in range(52):
     req.append(required(t))
 
 # sort the dictionary of feed amounts by week before plotting 
-ordered = sorted(feed_dict.items())
 feed = []
-for x in ordered:
-    feed.append(x[1])
+for x in range(52):
+    feed.append(feed_dict[x])
 
 # edit settings 
 plt.figure(facecolor = 'black') 
@@ -118,9 +117,9 @@ y = array(feed)
 plt.subplot(2, 1, 1)
 plt.plot(x, y, color='#008080')
 plt.xticks(arange(min(x), max(x), 2.0))
-plt.yticks(arange(145, 175, 5))
+plt.yticks(arange(140, 175, 5))
 plt.xlabel ('Week')
-plt.ylabel ('Feed')
+plt.ylabel ('Initial Units of Grass')
 plt.tight_layout()
 
 # plot required feed per week
