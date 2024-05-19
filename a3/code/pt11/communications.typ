@@ -51,7 +51,7 @@ How much should the farmer feed his herd each week during the season? Please pro
 \
 == Data
 - $P$ - price of the milk from per unit of grass (\$) $= 4.2$
-- $R_t$ - units of required grass at time $t$ per cow
+- $R_t$ - units of grass required to feed the herd in week $t$
 - $G \(S_t\)$ - units of grass available next week given the amount at the start of week t
 - $S_0$ - units of grass on the field at time initially $= 100$
 - $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 40$

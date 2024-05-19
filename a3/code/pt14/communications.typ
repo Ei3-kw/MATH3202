@@ -62,6 +62,14 @@ def pasture(p,weather):
 
 Incorporating the uncertainty in the weather, how much should the farmer feed his herd each week during the season? Please provide us with the total expected revenue from milk sold, minus any pasture penalty incurred.
 
+= Pt14
+\
+During the season the farmer can decide to dry-off a cow, stopping lactation for the remainder of the season. The advantage of this is that each dry cow in the herd reduces the weekly feed required by 3 units, but those cows can no longer be used to produce milk.
+
+If the farmer decides to dry-off a cow in particular week, the cow will still produce milk and require the usual feeding that week but will then be dry at the start of the following week. The farmer will never dry-off more than one cow in a week.
+
+Allowing for the option of dry-off, how much should the farmer feed his herd each week during the season and how should he time any dry-offs? Please provide us with the total expected revenue from milk sold, minus any pasture penalty incurred.
+
 #pagebreak()
 
 == Sets
@@ -74,29 +82,34 @@ Incorporating the uncertainty in the weather, how much should the farmer feed hi
 - $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given the amount at the start of week $t$
 - $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given the amount at the start of week $t$
 - $S_0$ - units of grass on the field at time initially $= 100$
-- $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 40$
+- $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 10 times (4-d)$
 - $"MG"$ - minimum units of grass before penalty is applied $= 150$
 - $L$ - penalty cost per unit under 150 (\$) $= 5$
 - $P_"good"$ - probability of having good weather in the region $= 0.5$
+- $"DRF"$ - dry reduced feed in units of grass $= 3$
 \
 == Stages
 - Weeks - $0 <= t <= 51$
 \
 == State
 - $S_t$ - pasture at the start of week t
+- $d$ - number of dried cows
 \
 == Action
-- $A_t = [0, min(S_t, "MF")]$ - extra feed to the herd on week t
+- $A_t = [0, min(S_t, "MF")]$   - extra feed to the herd on week t
+- $D := d -> d + 1$             - dry a cow
 \
 == Value Function
-$ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
+$ V_t (S_t, d) = "maximum expected income if we start week" t "with" S_t "pasture and " d "cows dried" $
 \
 == Base Case
-$ forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity $
-$ V_51 = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51) + (1 - P_"good") times (G (S_51, "bad") - a - R_51))," "forall a in A_51)) $
+- $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
+- $V_51 (S_51, 4) = -L times (P_"good" times (G (S_t, "good") - R_51 + 4 times "DRF") + (1 - P_"good") times (G (S_51, "bad")) - R_51 + 4 times "DRF")$
+- $V_51 (S_51, d) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 + d times "DRF") + (1 - P_"good") times (G (S_51, "bad") - a - R_51 + d times "DRF"))," "forall a in A_51))$
 \
 == General Case
-$ V_t (S_t) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t) + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t)," "forall a in A_t) $
+- $V_t (S_t, 4) = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - 4 times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - 4 times "DRF")$
+- $V_t (S_t, d) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - d times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - d times "DRF")," "forall a in A_t)$
 
 
 

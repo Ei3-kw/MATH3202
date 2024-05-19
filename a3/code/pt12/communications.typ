@@ -57,7 +57,7 @@ Taking this into account, how much should the farmer feed his herd each week dur
 \
 == Data
 - $P$ - price of the milk from per unit of grass (\$) $= 4.2$
-- $R_t$ - units of required grass at time $t$ per cow
+- $R_t$ - units of grass required to feed the herd in week $t$
 - $G \(S_t\)$ - units of grass available next week given the amount at the start of week t
 - $S_0$ - units of grass on the field at time initially $= 100$
 - $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 40$
@@ -77,7 +77,7 @@ Taking this into account, how much should the farmer feed his herd each week dur
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-- $V_t (S_t) = 0," "forall 0 <= t <= 51" "s.t." "S_t <= R_t$
+- $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
 - $V_51 = max(a times P - L times (G (S_51) - a - R_51)," "forall a in A_51))$
 \
 == General Case
