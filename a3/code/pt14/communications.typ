@@ -79,8 +79,8 @@ Allowing for the option of dry-off, how much should the farmer feed his herd eac
 == Data
 - $P$ - price of the milk from per unit of grass (\$) $= 4.2$
 - $R_t$ - units of grass required to feed the herd in week $t$
-- $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given the amount at the start of week $t$
-- $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given the amount at the start of week $t$
+- $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given $S_t$ pasture at the start of week $t$
+- $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given $S_t$ pasture at the start of week $t$
 - $S_0$ - units of grass on the field at time initially $= 100$
 - $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 10 times (4-d)$
 - $"MG"$ - minimum units of grass before penalty is applied $= 150$
@@ -97,19 +97,24 @@ Allowing for the option of dry-off, how much should the farmer feed his herd eac
 \
 == Action
 - $A_t = [0, min(S_t, "MF")]$   - extra feed to the herd on week t
-- $D := d -> d + 1$             - dry a cow
+- $D = {d, d+1}$             - dry a cow or not
 \
 == Value Function
 $ V_t (S_t, d) = "maximum expected income if we start week" t "with" S_t "pasture and " d "cows dried" $
 \
 == Base Case
-- $forall 0 <= t <= 51," "S_t <= R_t - d times "DRF" -> V_t (S_t, d) = -infinity$
-- $V_51 (S_51, 4) = -L times (P_"good" times (G (S_51, "good") - R_51 + 4 times "DRF") + (1 - P_"good") times (G (S_51, "bad")) - R_51 + 4 times "DRF")$
-- $V_51 (S_51, d) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 + d times "DRF") + (1 - P_"good") times (G (S_51, "bad") - a - R_51 + d times "DRF"))," "forall a in A_51))$
+- Insufficient units of pasture to meet the feeding requirement $->$ Infeasible\ $forall 0 <= t <= 51," "S_t <= R_t - d times "DRF" -> V_t (S_t, d) = -infinity$
+- End of the season, apply penalty for each unit under 150
+    - All cows dried $->$ deterministic\
+        $V_51 (S_51, 4) = -L times (P_"good" times (G (S_51, "good") - R_51 + 4 times "DRF") + (1 - P_"good") times (G (S_51, "bad")) - R_51 + 4 times "DRF")$
+    - otherwise $->$ compute feed amount for week 51 taking penalty into consideration to maximise the profit\
+        $V_51 (S_51, d) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 + d times "DRF") + (1 - P_"good") times (G (S_51, "bad") - a - R_51 + d times "DRF"))," "forall a in A_51))$
 \
 == General Case
-- $V_t (S_t, 4) = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - 4 times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - 4 times "DRF")$
-- $V_t (S_t, d) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - d times "DRF", d') + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - d times "DRF", d')," "forall a in A_t," "forall d' in {d, d+1})$
+- All cows dried $->$ deterministic, compute to end of the season\
+    $V_t (S_t, 4) = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - 4 times "DRF") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - 4 times "DRF")$
+- otherwise $->$ explore the action space $D times A_t$ - $("dry a cow?") times ("different amount of extra feed")$ to find the optimal strategy that maximises the profit\
+    $V_t (S_t, d) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t - d times "DRF", d') + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t - d times "DRF", d')," "forall a in A_t," "forall d' in D)$
 
 
 

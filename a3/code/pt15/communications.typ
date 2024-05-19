@@ -103,14 +103,14 @@ Taking into account the individual differences between the four cows, how much s
 \
 == Data
 - $P$ - price of the milk from per unit of grass (\$) $= 4.2$
-- $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given the amount at the start of week $t$
-- $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given the amount at the start of week $t$
+- $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given $S_t$ pasture at the start of week $t$
+- $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given $S_t$ pasture at the start of week $t$
 - $S_0$ - units of grass on the field at time initially $= 100$
 - $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 10 times sum l$
 - $"MG"$ - minimum units of grass before penalty is applied $= 150$
 - $L$ - penalty cost per unit under 150 (\$) $= 5$
 - $P_"good"$ - probability of having good weather in the region $= 0.5$
-- $R_t (l_t)$ - units of grass required to feed the herd in week $t$ given lactating tuple $l_t$
+- $R_t (l_t)$ - units of grass required to feed each cow in week $t$ given lactating tuple $l_t$
 - $l_0 = (1, 1, 1, 1)$
 - $l_"dried" = (0, 0, 0, 0)$
 
@@ -130,13 +130,18 @@ Taking into account the individual differences between the four cows, how much s
 $ V_t (S_t, l_t) = "maximum expected income if we start week" t "with" S_t "pasture and lactating pattern" l_t $
 \
 == Base Case
-- $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
-- $V_51 (S_51, l_"dried") = -L times (P_"good" times (G (S_51, "good") - R_51 (l_"dried")) + (1 - P_"good") times (G (S_51, "bad")) - R_51 (l_"dried"))$
-- $V_51 (S_51, l_51) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 (l_51)) + (1 - P_"good") times (G (S_51, "bad") - a - R_51 (l_51)))," "forall a in A_51))$
+- Insufficient units of pasture to meet the feeding requirement $->$ Infeasible\ $forall 0 <= t <= 51," "S_t <= R_t (l_t) -> V_t (S_t, l_t) = -infinity$
+- End of the season, apply penalty for each unit under 150
+    - All cows dried $->$ deterministic\
+        $V_51 (S_51, l_"dried") = -L times (P_"good" times (G (S_51, "good") - R_51 (l_"dried")) + (1 - P_"good") times (G (S_51, "bad")) - R_51 (l_"dried"))$
+    - otherwise $->$ compute feed amount for week 51 taking penalty into consideration to maximise the profit\
+        $V_51 (S_51, l_51) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51 (l_51)) + (1 - P_"good") times (G (S_51, "bad") - a - R_51 (l_51)))," "forall a in A_51)$
 \
 == General Case
-- $V_t (S_t, l_"dried") = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t (l_"dried")," "l_"dried") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t (l_"dried")," "l_"dried")$
-- $V_t (S_t, l_t) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t (l_t), l_(t+1)) + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t (l_t), l_(t+1))," "forall a in A_t," "forall l_(t+1) in {l_t, l_t "with one of the 1s changed to a 0"})$
+- All cows dried $->$ deterministic, compute to end of the season\
+    $V_t (S_t, l_"dried") = P_"good" times V_(t+1) (G (S_t, "good") - a - R_t (l_"dried")," "l_"dried") + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t (l_"dried")," "l_"dried")$
+- otherwise $->$ explore the action space $D_c times A_t$ - $("drying cow" c) times ("different amount of extra feed")$ to find the optimal strategy that maximises the profit\
+    $V_t (S_t, l_t) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t (l_t), l_(t+1)) + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t (l_t), l_(t+1))," "forall a in A_t," "forall l_(t+1) in {l_t, l_t "with one of the 1s changed to a 0"})$
 
 
 

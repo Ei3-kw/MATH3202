@@ -37,7 +37,6 @@ def required(t):
     else:
         y = 10.241 + 0.13*18 + 0.01121*(t-18)**2
     return round(y)
-""" returns the units of grass below 150 """
 
 _revenue = {}
 def revenue(t,s,d):
@@ -58,25 +57,28 @@ def revenue(t,s,d):
         available_good = pasture(s,'Good') - required(t) + dryFeed*d
         available_poor = pasture(s,'Poor') - required(t) + dryFeed*d
 
+        # base case - end of season, apply penalty if required
         if t == 51:
-                                    
-            # calculate the maximum amount of profit given the penalty for each unit under 150 
+            # all cows dried
             if d == 4:
-                _revenue[t,s,d] = (PGood * (-L*penalty_grass(available_good)) 
-                                   + (1-PGood) * (-L*penalty_grass(available_poor)), (0, d))
+                _revenue[t,s,d] = (PGood * (-L*penalty_grass(available_good))
+                    + (1-PGood) * (-L*penalty_grass(available_poor)), (0, d))
             else:
-                _revenue[t,s,d] = max((PGood * (P*a - L*penalty_grass(available_good-a)) 
-                                       + (1-PGood) * (P*a - L*penalty_grass(available_poor-a)), (a, d)) 
-                                      for a in range(min(maxUnits+1, available+1)))
-
-        elif d == 4:
-            # no profit can be made if all cows are dry so there are no actions to consider
-            _revenue[t,s,d] = (PGood * revenue(t+1, available_good, d)[0] + (1-PGood) * revenue(t+1, available_poor, d)[0], (0, d))
-
-        else:
-            _revenue[t,s,d] = max((PGood * (P*a + revenue(t+1, available_good-a, d+b)[0]) 
-                                   + (1-PGood) * (P*a + revenue(t+1, available_poor-a, d+b)[0]), (a, d+b)) 
-                                  for a in range(min(maxUnits+1, available+1)) for b in range(dryable+1))
+                _revenue[t,s,d] = max(
+                    (PGood * (P*a - L*penalty_grass(available_good-a))
+                    + (1-PGood) * (P*a - L*penalty_grass(available_poor-a)), (a, d))
+                    for a in range(min(maxUnits+1, available+1)))
+        else: # general case
+            # all cows dried
+            if d == 4:
+                # no profit can be made if all cows are dry so there are no actions to consider
+                _revenue[t,s,d] = (PGood * revenue(t+1, available_good, d)[0]\
+                    + (1-PGood) * revenue(t+1, available_poor, d)[0], (0, d))
+            else: # explore (drying a cow or not) X (diff extra feed)
+                _revenue[t,s,d] = max(
+                    (PGood * (P*a + revenue(t+1, available_good-a, d+b)[0])
+                        + (1-PGood) * (P*a + revenue(t+1, available_poor-a, d+b)[0]), (a, d+b))
+                    for a in range(min(maxUnits+1, available+1)) for b in range(dryable+1))
 
     return _revenue[t,s,d]
 

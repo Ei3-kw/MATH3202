@@ -52,7 +52,7 @@ How much should the farmer feed his herd each week during the season? Please pro
 == Data
 - $P$ - price of the milk from per unit of grass (\$) $= 4.2$
 - $R_t$ - units of grass required to feed the herd in week $t$
-- $G \(S_t\)$ - units of grass available next week given the amount at the start of week t
+- $G \(S_t\)$ - units of grass available next week given $S_t$ the amount at the start of week t
 - $S_0$ - units of grass on the field at time initially $= 100$
 - $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 40$
 \
@@ -88,8 +88,11 @@ How much should the farmer feed his herd each week during the season? Please pro
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-- $forall 0 <= t <= 51," "S_t <= R_t -> V_t (S_t) = -infinity$
-- $V_51 = max(a times P," "forall a in A_51)$
+- Insufficient units of pasture to meet the feeding requirement $->$ Infeasible\
+$ forall 0 <= t <= 51," "S_t <= R_t -> V_t (S_t) = -infinity $
+- End of the season, compute feed amount for week 51 maximising the profit
+$ V_51 = max(a times P," "forall a in A_51) $
 \
 == General Case
+- explore the action space $A_t$ to find the optimal feeding strategy that maximises the profit \
 $ V_t (S_t) = max(a times P + V_(t+1) (G (S_t) - a - R_t)," "forall a in A_t) $

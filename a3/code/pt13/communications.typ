@@ -71,8 +71,8 @@ Incorporating the uncertainty in the weather, how much should the farmer feed hi
 == Data
 - $P$ - price of the milk from per unit of grass (\$) $= 4.2$
 - $R_t$ - units of grass required to feed the herd in week $t$
-- $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given the amount at the start of week $t$
-- $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given the amount at the start of week $t$
+- $G \(S_t, "good"\)$ - units of grass available next week if the weather is good, given $S_t$ pasture at the start of week $t$
+- $G \(S_t, "bad"\)$ - units of grass available next week if the weather is bad, given $S_t$ pasture at the start of week $t$
 - $S_0$ - units of grass on the field at time initially $= 100$
 - $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 40$
 - $"MG"$ - minimum units of grass before penalty is applied $= 150$
@@ -92,10 +92,13 @@ Incorporating the uncertainty in the weather, how much should the farmer feed hi
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
+- Insufficient units of pasture to meet the feeding requirement $->$ Infeasible\
 $ forall 0 <= t <= 51," "S_t <= R_t -> V_t (S_t) = -infinity $
-$ V_51 = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51) + (1 - P_"good") times (G (S_51, "bad") - a - R_51))," "forall a in A_51)) $
+- End of the season, compute feed amount for week 51 maximising the profit, and apply penalty for each unit under 150 taking both good and bad weather into consideration
+$ V_51 (S_51) = max(a times P - L times (P_"good" times (G (S_51, "good") - a - R_51) + (1 - P_"good") times (G (S_51, "bad") - a - R_51))," "forall a in A_51)) $
 \
 == General Case
+- explore the action space $A_t$ to find the optimal feeding strategy that maximises the profit \
 $ V_t (S_t) = max(a times P + P_"good" times V_(t+1) (G (S_t, "good") - a - R_t) + (1 - P_"good") times V_(t+1) (G (S_t, "bad") - a - R_t)," "forall a in A_t) $
 
 
