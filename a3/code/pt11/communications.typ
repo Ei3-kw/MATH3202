@@ -50,11 +50,11 @@ How much should the farmer feed his herd each week during the season? Please pro
 - $T$ - time (week)
 \
 == Data
-- $P$ - price of the milk from per unit of grass (\$) = 4.2
-- $R_t$ - required grass at time $t$ per cow (10kg)
+- $P$ - price of the milk from per unit of grass (\$) $= 4.2$
+- $R_t$ - units of required grass at time $t$ per cow
 - $G \(S_t\)$ - units of grass available next week given the amount at the start of week t
-- $S_0$ - grass on the field at time initially (10kg) = 100
-- $"MF"$ -  maximum units of feed that can be converted into milk across the herd
+- $S_0$ - units of grass on the field at time initially $= 100$
+- $"MF"$ - maximum units of feed that can be converted into milk across the herd $= 40$
 \
 // == Variables
 // - $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
@@ -82,14 +82,14 @@ How much should the farmer feed his herd each week during the season? Please pro
 - $S_t$ - pasture at the start of week t
 \
 == Action
-- $A_t in [0, min(S_t, "MF")]$ - extra feed to the herd on week t
+- $A_t = [0, min(S_t, "MF")]$ - extra feed to the herd on week t
 \
 == Value Function
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-- $V_t (S_t) = 0," "forall t >= 0" "s.t." "S_t <= R_t$
-- $V_51 = ceil(A_51 times P)$
+- $V_t (S_t) = 0," "forall 0 <= t <= 51" "s.t." "S_t <= R_t$
+- $V_51 = max(a times P," "forall a in A_51)$
 \
 == General Case
-$ V_t (S_t) = ceil(A_t times P + V_(t+1) (G (S_t) - A_t)) $
+$ V_t (S_t) = max(a times P + V_(t+1) (G (S_t) - a - R_t)," "forall a in A_t) $
