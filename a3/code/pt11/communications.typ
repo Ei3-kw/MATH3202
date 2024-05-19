@@ -54,6 +54,7 @@ How much should the farmer feed his herd each week during the season? Please pro
 - $R_t$ - required grass at time $t$ per cow (10kg)
 - $G \(S_t\)$ - units of grass available next week given the amount at the start of week t
 - $S_0$ - grass on the field at time initially (10kg) = 100
+- $"MF"$ -  maximum units of feed that can be converted into milk across the herd
 \
 // == Variables
 // - $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
@@ -81,13 +82,13 @@ How much should the farmer feed his herd each week during the season? Please pro
 - $S_t$ - pasture at the start of week t
 \
 == Action
-- $A_t$ - extra feed to the herd on week t
+- $A_t in [0, min(S_t, "MF")]$ - extra feed to the herd on week t
 \
 == Value Function
 $ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
 \
 == Base Case
-- $V_t (S_t) = 0, forall t >= 0 s.t. S_t <= R_t$
+- $V_t (S_t) = 0," "forall t >= 0" "s.t." "S_t <= R_t$
 - $V_51 = ceil(A_51 times P)$
 \
 == General Case

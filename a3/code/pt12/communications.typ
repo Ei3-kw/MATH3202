@@ -56,27 +56,56 @@ Taking this into account, how much should the farmer feed his herd each week dur
 - $T$ - time (week)
 \
 == Data
-- $P$ - price of the milk from per unit of grass (\$)
+- $P$ - price of the milk from per unit of grass (\$) = 4.2
 - $R_t$ - required grass at time $t$ per cow (10kg)
-- $G_t$ - growth of the grass at time $t$ (10kg)
-- $F_0$ - grass on the field at time initially (10kg)
+- $G \(S_t\)$ - units of grass available next week given the amount at the start of week t
+- $S_0$ - grass on the field at time initially (10kg) = 100
+- $"MF"$ -  maximum units of feed that can be converted into milk across the herd
+- $"MG"$ - minimum units of grass before penalty is applied = 150
+- $L$ - penalty cost per unit under 150 = 5
 \
-== Variables
-- $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
-- $F_t$ - grass on the field at time $t$ (10kg)
-
+== Stages
+- Weeks - $0 <= t <= 51$
 \
-== Objective function
-$ max(P times sum_(t in T) sum_(c in C) (X_("ct")-R_t)) $
+== State
+- $S_t$ - pasture at the start of week t
 \
-== Constraints
-- Cows can't eat more than the amount of existing grass at any week
-$ forall t in T, sum_(c in C) X_("ct") <= F_t $
+== Action
+- $A_t in [0, min(S_t, "MF")]$ - extra feed to the herd on week t
+\
+== Value Function
+$ V_t (S_t) = "maximum expected income if we start week" t "with" S_t "pasture" $
+\
+== Base Case
+- $V_t (S_t) = 0," "forall t >= 0" "s.t." "S_t <= R_t$
+- $V_51 = ceil(A_51 times P - L times (S_51 - "MG"))$
+\
+== General Case
+$ V_t (S_t) = ceil(A_t times P + V_(t+1) (G (S_t) - A_t)) $
 
-- Each cow needs to eat the minimum requirement every week
-$ forall t in T, forall c in C, X_("ct") >= R_t $
 
-- Grass balance & non neg
-$ forall t in T, F_("t+1") = F_t + G_t - sum_(c in C) X_("ct") $
-$ forall t in T, F_t >= 0 $
+// == Data
+// - $P$ - price of the milk from per unit of grass (\$)
+// - $R_t$ - required grass at time $t$ per cow (10kg)
+// - $G_t$ - growth of the grass at time $t$ (10kg)
+// - $F_0$ - grass on the field at time initially (10kg)
+// \
+// == Variables
+// - $X_("ct")$ - amount of grass feed to cow $c$ at time $t$
+// - $F_t$ - grass on the field at time $t$ (10kg)
+
+// \
+// == Objective function
+// $ max(P times sum_(t in T) sum_(c in C) (X_("ct")-R_t)) $
+// \
+// == Constraints
+// - Cows can't eat more than the amount of existing grass at any week
+// $ forall t in T, sum_(c in C) X_("ct") <= F_t $
+
+// - Each cow needs to eat the minimum requirement every week
+// $ forall t in T, forall c in C, X_("ct") >= R_t $
+
+// - Grass balance & non neg
+// $ forall t in T, F_("t+1") = F_t + G_t - sum_(c in C) X_("ct") $
+// $ forall t in T, F_t >= 0 $
 
