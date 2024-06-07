@@ -35,7 +35,7 @@ $therefore, C_2 = 1 - 1/3 = 2/3, x_2 = 0$ in the optimal solution.
 $x_(p, s) in {0, 1}$ - player $p in P$ play in position $s in S$
 
 === Objective
-$ sum_(p in P) sum_(s in S) x_(p, s) times R_p$
+$ max(sum_(p in P) sum_(s in S) x_(p, s) times R_p)$
 
 === Constraints
 - within budget
@@ -51,16 +51,17 @@ $ sum_(p in P) sum_(s in S) x_(p, s) times R_p$
 
 == (b)
 === Data
-- $A_s$ - adjacent squares of position $s in S$
+- $A = {{0, 1}, {0. 3}, ...}$ - a collection of neighbours
 
 === Variables
-- $y_(p, s)$ - number of adjacent players from the same city $c in C$ if we put player $p in P$ at position $s in S$
+- $y_a in {0, 1}$ - binary variable indicating whether adjacent squares $a in A$ have players from the same city
 
 === Objective
-$ sum_(p in P) sum_(s in S) x_(p, s) times (R_p + y_(p, s)/2) $
+$ max((sum_(p in P) sum_(s in S) x_(p, s) times R_p) + (sum_(a in A) y_a)) $
 
 === Constraints
-- $forall s' in S, forall p' in P, sum_(s in A_s') sum_(c in C) sum_(p in P) H_(p, c) times x_(p, s) = x_(p', s') times y_(p', s')$
+- $y_a = 1 <=> "players on both posistions " s in a "are from the same city"$
+$ sum_(p in P) sum_(s in a) x_(p, s) = 2 times y_a, forall a in A $
 
 
 = Q3
